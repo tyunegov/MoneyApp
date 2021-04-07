@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace MoneyApp.Controllers
 {
+    [Produces("application/json")]
     [Route("[controller]")]
     [ApiController]
     public class TransactionController : ControllerBase
