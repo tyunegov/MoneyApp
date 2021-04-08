@@ -29,7 +29,7 @@ namespace MoneyAppAPI.Controllers.Tests
         }
 
         [TestMethod()]
-        public void GetAllReturnTransactionModel()
+        public void GetAllReturnListTransactionModel()
         {
             //Act
             IRestResponse response = restClient.Execute(TransactionPage.GetAll);
@@ -38,6 +38,18 @@ namespace MoneyAppAPI.Controllers.Tests
             Console.WriteLine(locationResponse);
             // Assert
             Assert.IsTrue(locationResponse is IEnumerable<TransactionModel>);
+        }
+
+        [TestMethod()]
+        public void Get1ReturnTransactionModel()
+        {
+            //Act
+            IRestResponse response = restClient.Execute(TransactionPage.GetById1);
+            Console.WriteLine(response.Content);
+            TransactionModel locationResponse = new JsonDeserializer().Deserialize<TransactionModel>(response);
+            Console.WriteLine(locationResponse);
+            // Assert
+            Assert.IsTrue(locationResponse is TransactionModel);
         }
     }
 }

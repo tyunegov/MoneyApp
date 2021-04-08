@@ -22,5 +22,15 @@ namespace MoneyApp.Controllers
         {
             return repository.GetAll();
         }
+
+        [HttpGet]
+        [Route("Get/{id}")]
+        public IActionResult Get(int id)
+        {
+            TransactionModel transaction = repository.Get(id);
+            if(transaction==null)
+                return NotFound($"Transaction not found by id {id}");
+            return Ok(transaction);
+        }
     }
 }

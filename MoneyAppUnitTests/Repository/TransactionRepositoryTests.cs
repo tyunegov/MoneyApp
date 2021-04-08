@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MoneyApp.Controllers;
 using MoneyApp.Models;
 using MoneyApp.Repository;
@@ -6,6 +7,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,7 +38,24 @@ namespace MoneyApp.Repository.Tests
             IEnumerable<TransactionModel> result = controller.GetAll();
             mock.Verify(r => r.GetAll(), Times.Once, "Не был вызван метод repository.GetAll()");
             // Assert
-            Assert.AreEqual(result.Count(), MoqTransactions().Count(), "Не соответствует количество элементов");
+            Assert.AreEqual(MoqTransactions().Count(), result.Count(), "Не соответствует количество элементов");
+        }
+
+        [TestMethod()]
+        public void GetTransactionByIdShouldNotFound()
+        {
+            TransactionModel model = null;
+            // Arrange
+            var mock = new Mock<ITransactionRepository>();
+            mock.Setup(a => a.Get(0)).Returns(model);
+            TransactionController controller = new TransactionController(mock.Object);
+
+            // Act
+            var result = controller.Get(0);
+            //  mock.Verify(r => r.NotFound(), Times.Once, "Не был вызван метод repository.GetAll()");
+            // Assert
+            Assert.IsTrue(result is NotFoundObjectResult);
+            Assert.AreEqual("Transaction not found by id 0", ((NotFoundObjectResult)result).Value);
         }
     }
 }
