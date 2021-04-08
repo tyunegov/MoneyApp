@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MoneyApp.Models;
+using MoneyAppAPITests.PageObject;
 using RestSharp;
 using RestSharp.Serialization.Json;
 using System;
@@ -11,14 +12,18 @@ namespace MoneyAppAPI.Controllers.Tests
     [TestClass()]
     public class TransactionControllerTests
     {
+        readonly RestClient restClient;
+
+        public TransactionControllerTests()
+        {
+            restClient = TransactionPage.RestClient;
+        }
+
         [TestMethod()]
         public void GetAllShouldStatusOk()
         {
-            //Arrange
-            RestClient client = new RestClient(@"https://localhost:44303/");
-            RestRequest request = new RestRequest("Transaction/All", Method.GET);
             //Act
-            IRestResponse response = client.Execute(request);
+            IRestResponse response = restClient.Execute(TransactionPage.GetAll);
             // Assert
             Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
         }
@@ -26,11 +31,8 @@ namespace MoneyAppAPI.Controllers.Tests
         [TestMethod()]
         public void GetAllReturnTransactionModel()
         {
-            //Arrange
-            RestClient client = new RestClient(@"https://localhost:44303/");
-            RestRequest request = new RestRequest("Transaction/All", Method.GET);
             //Act
-            IRestResponse response = client.Execute(request);
+            IRestResponse response = restClient.Execute(TransactionPage.GetAll);
             Console.WriteLine(response.Content);
             IEnumerable<TransactionModel> locationResponse = new JsonDeserializer().Deserialize<IEnumerable<TransactionModel>>(response);
             Console.WriteLine(locationResponse);
