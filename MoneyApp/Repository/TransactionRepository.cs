@@ -19,7 +19,7 @@ namespace MoneyApp.Repository
         {
             using (IDbConnection db = new SqlConnection(connectionString))
             {
-                return db.Query<TransactionModel, TypeTransactionModel, TransactionModel>(
+                return (IEnumerable<TransactionModel>)db.QueryAsync<TransactionModel, TypeTransactionModel, TransactionModel>(
                     @"SELECT * FROM dbo.Transactions t
                     inner join TypeTransaction tt on tt.Id = t.TypeId",
                     (t, tt) =>
