@@ -13,5 +13,6 @@ namespace MoneyAppAPITests.PageObject
         public static readonly RestRequest GetAll = new RestRequest("Transaction/All", Method.GET);
         public static readonly RestRequest Get0NotFound = new RestRequest("Transaction/Get/0", Method.GET);
         public static readonly RestRequest Get1Ok = new RestRequest("Transaction/Get/1", Method.GET);
+        public static readonly RestRequest Delete0NotFound = new RestRequest("Transaction/Delete/0", Method.GET);
     }
 }

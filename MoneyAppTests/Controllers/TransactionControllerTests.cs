@@ -18,7 +18,7 @@ namespace MoneyAppAPI.Controllers.Tests
         {
             restClient = TransactionPage.RestClient;
         }
-
+        #region GetAll
         [TestMethod()]
         public void GetAllShouldStatusOk()
         {
@@ -38,7 +38,8 @@ namespace MoneyAppAPI.Controllers.Tests
             Assert.AreEqual(response.StatusCode, HttpStatusCode.OK, "Status OK");
             Assert.IsTrue(locationResponse is IEnumerable<TransactionModel>, "IEnumerable<TransactionModel>");
         }
-
+        #endregion
+        #region Get/{id}
         [TestMethod()]
         public void Get1ReturnTransactionModel()
         {
@@ -59,5 +60,16 @@ namespace MoneyAppAPI.Controllers.Tests
             Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound, "Статус NotFound");
             Assert.AreEqual(response.Content, "\"Transaction not found by id 0\"");
         }
+        #endregion
+        #region Delete/{id}
+        public void Delete0ShouldNotFound()
+        {
+            //Act
+            IRestResponse response = restClient.Execute(TransactionPage.Delete0NotFound);
+            // Assert
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound, "Статус NotFound");
+            Assert.AreEqual(response.Content, "\"Transaction not found by id 0\"");
+        }
+        #endregion
     }
 }
