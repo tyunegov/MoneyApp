@@ -30,17 +30,17 @@ namespace MoneyApp.Controllers
         {
             TransactionModel transaction = repository.Get(id);
             if(transaction==null)
-                return NotFound($"Transaction not found by id {id}");
+                return BadRequest($"Transaction not found by id {id}");
             return Ok(transaction);
         }
 
-        [HttpGet]
+        [HttpDelete]
         [Route("Delete/{id}")]
         public IActionResult Delete(int id)
         {
             TransactionModel transaction = repository.Get(id);
             if (transaction == null)
-                return NotFound($"Transaction not found by id {id}");
+                return BadRequest($"Transaction not found by id {id}");
             repository.Delete(id);
             return Ok(transaction);
         }

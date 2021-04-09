@@ -69,8 +69,8 @@ namespace MoneyApp.Repository.Tests
             // Act
             var result = controller.Get(0);
             // Assert
-            Assert.IsTrue(result is NotFoundObjectResult);
-            Assert.AreEqual("Transaction not found by id 0", ((NotFoundObjectResult)result).Value);
+            Assert.IsTrue(result is BadRequestObjectResult);
+            Assert.AreEqual("Transaction not found by id 0", ((BadRequestObjectResult)result).Value);
         }
         #endregion
         #region Delete(id)
@@ -123,8 +123,8 @@ namespace MoneyApp.Repository.Tests
             // Act
             var result = controller.Delete(0);
             // Assert
-            Assert.IsTrue(result is NotFoundObjectResult);
-            Assert.AreEqual("Transaction not found by id 0", ((NotFoundObjectResult)result).Value);
+            Assert.IsTrue(result is BadRequestObjectResult);
+            Assert.AreEqual("Transaction not found by id 0", ((BadRequestObjectResult)result).Value);
         }
         #endregion
     }

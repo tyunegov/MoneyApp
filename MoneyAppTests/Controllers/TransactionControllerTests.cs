@@ -57,7 +57,7 @@ namespace MoneyAppAPI.Controllers.Tests
             //Act
             IRestResponse response = restClient.Execute(TransactionPage.Get0NotFound);
             // Assert
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound, "Статус NotFound");
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest, "Статус BadRequest");
             Assert.AreEqual(response.Content, "\"Transaction not found by id 0\"");
         }
         #endregion
@@ -67,7 +67,7 @@ namespace MoneyAppAPI.Controllers.Tests
             //Act
             IRestResponse response = restClient.Execute(TransactionPage.Delete0NotFound);
             // Assert
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound, "Статус NotFound");
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest, "Статус BadRequest");
             Assert.AreEqual(response.Content, "\"Transaction not found by id 0\"");
         }
         #endregion
