@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MoneyApp.Models;
 using MoneyApp.Repository;
+using System;
 using System.Collections.Generic;
 
 namespace MoneyApp.Controllers
@@ -30,6 +31,17 @@ namespace MoneyApp.Controllers
             TransactionModel transaction = repository.Get(id);
             if(transaction==null)
                 return NotFound($"Transaction not found by id {id}");
+            return Ok(transaction);
+        }
+
+        [HttpGet]
+        [Route("Delete/{id}")]
+        public IActionResult Delete(int id)
+        {
+            TransactionModel transaction = repository.Get(id);
+            if (transaction == null)
+                return NotFound($"Transaction not found by id {id}");
+            repository.Delete(id);
             return Ok(transaction);
         }
     }
