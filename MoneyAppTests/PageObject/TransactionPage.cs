@@ -11,6 +11,7 @@ namespace MoneyAppAPITests.PageObject
     {
         public static readonly RestClient RestClient = new RestClient(@"https://localhost:44303/");
         public static readonly RestRequest GetAll = new RestRequest("Transaction/All", Method.GET);
-        public static readonly RestRequest GetById1 = new RestRequest("Transaction/Get/1", Method.GET);
+        public static readonly RestRequest Get0NotFound = new RestRequest("Transaction/Get/0", Method.GET);
+        public static readonly RestRequest Get1Ok = new RestRequest("Transaction/Get/1", Method.GET);
     }
 }

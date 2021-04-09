@@ -33,23 +33,31 @@ namespace MoneyAppAPI.Controllers.Tests
         {
             //Act
             IRestResponse response = restClient.Execute(TransactionPage.GetAll);
-            Console.WriteLine(response.Content);
             IEnumerable<TransactionModel> locationResponse = new JsonDeserializer().Deserialize<IEnumerable<TransactionModel>>(response);
-            Console.WriteLine(locationResponse);
             // Assert
-            Assert.IsTrue(locationResponse is IEnumerable<TransactionModel>);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK, "Status OK");
+            Assert.IsTrue(locationResponse is IEnumerable<TransactionModel>, "IEnumerable<TransactionModel>");
         }
 
         [TestMethod()]
         public void Get1ReturnTransactionModel()
         {
             //Act
-            IRestResponse response = restClient.Execute(TransactionPage.GetById1);
-            Console.WriteLine(response.Content);
+            IRestResponse response = restClient.Execute(TransactionPage.Get1Ok);
             TransactionModel locationResponse = new JsonDeserializer().Deserialize<TransactionModel>(response);
-            Console.WriteLine(locationResponse);
             // Assert
-            Assert.IsTrue(locationResponse is TransactionModel);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK, "Status OK");
+            Assert.IsTrue(locationResponse is TransactionModel, "TransactionModel");
+        }
+
+        [TestMethod()]
+        public void Get0ShouldNotFound()
+        {
+            //Act
+            IRestResponse response = restClient.Execute(TransactionPage.Get0NotFound);
+            // Assert
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound, "Статус NotFound");
+            Assert.AreEqual(response.Content, "\"Transaction not found by id 0\"");
         }
     }
 }
