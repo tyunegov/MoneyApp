@@ -16,38 +16,35 @@ namespace MoneyApp.Repository.Tests
     [TestClass()]
     public class TransactionRepositoryTests
     {
-        private IEnumerable<TransactionModel> MoqTransactions()
-        {
-            var users = new List<TransactionModel>
+        private static IEnumerable<TransactionModel> MoqTransactions = new List<TransactionModel>
             {
                 new TransactionModel { Id=1, Amount=10, Date=DateTime.Now, Description="", Type=new TypeTransactionModel{Id=1, Type="type1" } },
                 new TransactionModel { Id=2, Amount=20, Date=DateTime.Now, Description="", Type=new TypeTransactionModel{Id=1, Type="type2" } },
                 new TransactionModel { Id=3, Amount=30, Date=DateTime.Now, Description="", Type=new TypeTransactionModel{Id=1, Type="type3" } },
             };
-            return users;
-        }
+        
         #region GetAll
         [TestMethod()]
         public void GetAllTest()
         {
             // Arrange
             var mock = new Mock<ITransactionRepository>();
-            mock.Setup(a => a.GetAll()).Returns(MoqTransactions());
+            mock.Setup(a => a.GetAll()).Returns(MoqTransactions);
             TransactionController controller = new TransactionController(mock.Object);
 
             // Act
             IEnumerable<TransactionModel> result = controller.GetAll();
             // Assert
             mock.Verify(r => r.GetAll(), Times.Once, "Не был вызван метод repository.GetAll()");            
-            Assert.AreEqual(MoqTransactions().Count(), result.Count(), "Не соответствует количество элементов");
+            Assert.AreEqual(MoqTransactions.Count(), result.Count(), "Не соответствует количество элементов");
         }
         #endregion
         #region Get(id)
         [TestMethod()]
         public void Get1ShouldOk()
         {
-            TransactionModel model = MoqTransactions().FirstOrDefault();
             // Arrange
+            TransactionModel model = MoqTransactions.FirstOrDefault();
             var mock = new Mock<ITransactionRepository>();
             mock.Setup(a => a.Get(1)).Returns(model);
             TransactionController controller = new TransactionController(mock.Object);
@@ -61,16 +58,16 @@ namespace MoneyApp.Repository.Tests
         [TestMethod()]
         public void Get0ShouldNotFound()
         {
-            TransactionModel model = null;
             // Arrange
+            TransactionModel model = null;
             var mock = new Mock<ITransactionRepository>();
             mock.Setup(a => a.Get(0)).Returns(model);
             TransactionController controller = new TransactionController(mock.Object);
             // Act
             var result = controller.Get(0);
             // Assert
-            Assert.IsTrue(result is BadRequestObjectResult);
-            Assert.AreEqual("Transaction not found by id 0", ((BadRequestObjectResult)result).Value);
+            Assert.IsTrue(result is NotFoundObjectResult);
+            Assert.AreEqual("Transaction not found by id 0", ((NotFoundObjectResult)result).Value);
         }
         #endregion
         #region Delete(id)
@@ -80,8 +77,8 @@ namespace MoneyApp.Repository.Tests
         [TestMethod()]
         public void Delete1ShouldOk()
         {
-            TransactionModel model = MoqTransactions().FirstOrDefault();
             // Arrange
+            TransactionModel model = MoqTransactions.FirstOrDefault();
             var mock = new Mock<ITransactionRepository>();
             mock.Setup(a => a.Get(1)).Returns(model);
             TransactionController controller = new TransactionController(mock.Object);
@@ -98,8 +95,8 @@ namespace MoneyApp.Repository.Tests
         [TestMethod()]
         public void Delete1ReturnTransaction1()
         {
-            TransactionModel model = MoqTransactions().FirstOrDefault();
             // Arrange
+            TransactionModel model = MoqTransactions.FirstOrDefault();
             var mock = new Mock<ITransactionRepository>();
             mock.Setup(a => a.Get(1)).Returns(model);
             TransactionController controller = new TransactionController(mock.Object);
@@ -115,16 +112,61 @@ namespace MoneyApp.Repository.Tests
         [TestMethod()]
         public void Delete0ShouldNotFound()
         {
-            TransactionModel model = null;
             // Arrange
+            TransactionModel model = null;
             var mock = new Mock<ITransactionRepository>();
             mock.Setup(a => a.Get(0)).Returns(model);
             TransactionController controller = new TransactionController(mock.Object);
             // Act
             var result = controller.Delete(0);
             // Assert
-            Assert.IsTrue(result is BadRequestObjectResult);
-            Assert.AreEqual("Transaction not found by id 0", ((BadRequestObjectResult)result).Value);
+            Assert.IsTrue(result is NotFoundObjectResult);
+            Assert.AreEqual("Transaction not found by id 0", ((NotFoundObjectResult)result).Value);
+        }
+        #endregion
+        #region Post
+        [TestMethod()]
+        public void Post0ShouldCreated()
+        {
+            // Arrange
+            TransactionModel model = MoqTransactions.FirstOrDefault();
+            var mock = new Mock<ITransactionRepository>();
+            mock.Setup(a => a.Post(ref model)).Returns(1);
+            TransactionController controller = new TransactionController(mock.Object);
+            // Act
+            var result = controller.Post(model);
+            // Assert
+            Assert.IsTrue(result is CreatedResult, "Created result");
+        }
+
+        [TestMethod()]
+        public void Post0ShouldNotFound()
+        {
+            // Arrange
+            TransactionModel model = MoqTransactions.FirstOrDefault();
+            var mock = new Mock<ITransactionRepository>();
+            mock.Setup(a => a.Post(ref model)).Returns(-1);
+            TransactionController controller = new TransactionController(mock.Object);
+            // Act
+            var result = controller.Post(model);
+            // Assert
+            Assert.IsTrue(result is NotFoundObjectResult);
+            Assert.AreEqual($"Type not found by id {model.Type.Id}", ((NotFoundObjectResult)result).Value, "TypeNotFound");
+        }
+
+        [TestMethod()]
+        public void Post0ShouldBadRequest()
+        {
+            // Arrange
+            TransactionModel model = MoqTransactions.FirstOrDefault();            
+            var mock = new Mock<ITransactionRepository>();
+            mock.Setup(a => a.Post(ref model)).Returns(0);
+            TransactionController controller = new TransactionController(mock.Object);
+            // Act
+            var result = controller.Post(model);
+            // Assert
+            Assert.IsTrue(result is BadRequestObjectResult, "BadRequestResult");
+            Assert.AreEqual("Failed to write transaction", ((BadRequestObjectResult)result).Value, "Failed to write transaction");
         }
         #endregion
     }

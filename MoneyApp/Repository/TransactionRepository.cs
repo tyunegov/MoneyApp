@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using MoneyApp.Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -54,6 +55,37 @@ namespace MoneyApp.Repository
                         return t;
                     })
                     .FirstOrDefault();
+            }
+        }
+
+        public int Post(ref TransactionModel transaction)
+        {
+            using (IDbConnection db = new SqlConnection(connectionString))
+            {
+                //Проверяем наличие TypeId в БД
+                string sql = $"SELECT TOP 1 Id FROM TypeTransaction Where Id = '{transaction.Type.Id}'";
+                int typeId = db.Query<int>(sql).FirstOrDefault();
+                //При отсутствии возвращаем -1
+                if (typeId == 0)
+                {
+                    return -1;
+                }
+                //Пробуем сделать запись транзакции
+                var sqlQuery = $"DECLARE @ID int;" +
+                               $"INSERT INTO Transactions (Date, TypeId, Amount, Description)" +
+                                    $"VALUES('{transaction.Date}'," +
+                                    $"'{transaction.Type.Id}'," +
+                                    $"'{transaction.Amount}', " +
+                                    $"'{transaction.Description}');" +
+                               $"SET @ID = SCOPE_IDENTITY();" +
+                               $"SELECT @ID";
+                int id = db.Query<int>(sqlQuery).FirstOrDefault();
+                //Если запись не произошла, возвращаем 0
+                if(id==0)
+                    return 0;
+                //Если все успешно, возвращаем 1, transaction меняется на тот, что в БД
+                transaction = Get(id);
+                return 1;
             }
         }
     }

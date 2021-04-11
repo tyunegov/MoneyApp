@@ -8,5 +8,6 @@ namespace MoneyApp.Repository
         void Delete(int id);
         IEnumerable<TransactionModel> GetAll();
         TransactionModel Get(int id);
+        int Post(ref TransactionModel transaction);
     }
 }
