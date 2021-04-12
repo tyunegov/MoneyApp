@@ -57,7 +57,7 @@ namespace MoneyAppAPI.Controllers.Tests
             //Act
             IRestResponse response = restClient.Execute(TransactionPage.Get0NotFound);
             // Assert
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode, "Статус BadRequest");
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode, "Статус NotFound");
             Assert.AreEqual(response.Content, "\"Transaction not found by id 0\"");
         }
         #endregion
@@ -68,7 +68,7 @@ namespace MoneyAppAPI.Controllers.Tests
             //Act
             IRestResponse response = restClient.Execute(TransactionPage.Delete0NotFound);
             // Assert
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode, "Статус BadRequest");
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode, "Статус NotFound");
             Assert.AreEqual(response.Content, "\"Transaction not found by id 0\"");
         }
         #endregion
@@ -77,10 +77,10 @@ namespace MoneyAppAPI.Controllers.Tests
         public void PostShouldFieldIsRequired()
         {
             //Act
-            IRestResponse response = restClient.Execute(TransactionPage.PostBadRequest);
+            IRestResponse response = restClient.Execute(TransactionPage.PostNotFound);
             
             // Assert
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode,  "Статус BadRequest");
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode,  "Статус NotFound");
         }
 
         [TestMethod()]
@@ -88,9 +88,21 @@ namespace MoneyAppAPI.Controllers.Tests
         {
             //Act
             IRestResponse response = restClient.Execute(TransactionPage.PostOk);
+            TransactionModel locationResponse = new JsonDeserializer().Deserialize<TransactionModel>(response);
+            // Assert
+            Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
+            Assert.IsTrue(locationResponse.Id>0, "Проверка записи Id");
+        }
+
+        [TestMethod()]
+        public void PostShouldTypeNotFound()
+        {
+            //Act
+            IRestResponse response = restClient.Execute(TransactionPage.PostTypeNotFound);
 
             // Assert
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode, "Статус BadRequest");
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode, "Статус NotFound");
+            Assert.AreEqual(response.Content, "\"Type not found by id 0\"");
         }
         #endregion
     }

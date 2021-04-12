@@ -26,10 +26,10 @@ namespace MoneyApp.Controllers
         [Route("Post")]
         public IActionResult Post([FromBody]TransactionModel transaction)
         {
-            int result = repository.Post(ref transaction);
-            if (result == -1) return BadRequest($"Type not found by id {transaction.Type.Id}");
-            if (result == 0) return BadRequest($"Failed to write transaction");
-            return Ok(transaction);
+                int result = repository.Post(ref transaction);
+                if (result == -1) return NotFound($"Type not found by id {transaction.Type.Id}");
+                if (result == 0) return BadRequest($"Failed to write transaction");
+                return Created("", transaction);
         }
         #endregion
 
@@ -56,7 +56,7 @@ namespace MoneyApp.Controllers
         {
             TransactionModel transaction = repository.Get(id);
             if(transaction==null)
-                return BadRequest($"Transaction not found by id {id}");
+                return NotFound($"Transaction not found by id {id}");
             return Ok(transaction);
         }
         #endregion
@@ -72,7 +72,7 @@ namespace MoneyApp.Controllers
         {
             TransactionModel transaction = repository.Get(id);
             if (transaction == null)
-                return BadRequest($"Transaction not found by id {id}");
+                return NotFound($"Transaction not found by id {id}");
             repository.Delete(id);
             return Ok(transaction);
         }
