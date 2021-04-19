@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using MoneyApp.Models;
+using MoneyApp.Other;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -45,7 +46,7 @@ namespace MoneyApp.Repository
         {
             using (IDbConnection db = new SqlConnection(connectionString))
             {
-                var sql = $"SELECT * FROM Transactions t inner join TypeTransaction tt on tt.Id = t.TypeId WHERE t.Id = {id}"; 
+                var sql = $"SELECT TOP 1 * FROM Transactions t inner join TypeTransaction tt on tt.Id = t.TypeId WHERE t.Id = {id}"; 
 
                 return db.Query<TransactionModel, TypeTransactionModel, TransactionModel>(
                     sql, 
@@ -58,7 +59,7 @@ namespace MoneyApp.Repository
             }
         }
 
-        public int Post(ref TransactionModel transaction)
+        public TransactionStatus Insert(ref TransactionModel transaction)
         {
             using (IDbConnection db = new SqlConnection(connectionString))
             {
@@ -68,7 +69,7 @@ namespace MoneyApp.Repository
                 //При отсутствии возвращаем -1
                 if (typeId == 0)
                 {
-                    return -1;
+                    return TransactionStatus.NotFound;
                 }
                 //Пробуем сделать запись транзакции
                 var sqlQuery = $"DECLARE @ID int;" +
@@ -82,10 +83,33 @@ namespace MoneyApp.Repository
                 int id = db.Query<int>(sqlQuery).FirstOrDefault();
                 //Если запись не произошла, возвращаем 0
                 if(id==0)
-                    return 0;
+                    return TransactionStatus.FailedToWriteTransaction;
                 //Если все успешно, возвращаем 1, transaction меняется на тот, что в БД
                 transaction = Get(id);
-                return 1;
+                return TransactionStatus.Success;
+            }
+        }
+
+        public TransactionStatus Update(int id, ref TransactionModel transaction)
+        {
+            using (IDbConnection db = new SqlConnection(connectionString))
+            {
+                //Проверяем наличие транзакции в БД
+                TransactionModel _transaction = Get(id);
+                //При отсутствии возвращаем -1
+                if (_transaction == null)
+                {
+                    return TransactionStatus.NotFound;
+                }
+                //Пробуем изменить транзакцию
+                var sqlQuery = $"Update Transactions" +
+                                    $"Set (" +
+                                    $"Date = '{transaction.Date}'," +
+                                    $"TypeId = '{transaction.Type.Id}'," +
+                                    $"Amount = '{transaction.Amount}', " +
+                                    $"Description = '{(transaction.Description == null ? _transaction.Description : transaction.Description)}';)";
+                transaction = Get(id);
+                return TransactionStatus.Success;
             }
         }
     }

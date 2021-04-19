@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MoneyApp.Controllers;
 using MoneyApp.Models;
+using MoneyApp.Other;
 using MoneyApp.Repository;
 using Moq;
 using System;
@@ -131,7 +132,7 @@ namespace MoneyApp.Repository.Tests
             // Arrange
             TransactionModel model = MoqTransactions.FirstOrDefault();
             var mock = new Mock<ITransactionRepository>();
-            mock.Setup(a => a.Post(ref model)).Returns(1);
+            mock.Setup(a => a.Insert(ref model)).Returns(TransactionStatus.Success);
             TransactionController controller = new TransactionController(mock.Object);
             // Act
             var result = controller.Post(model);
@@ -145,7 +146,7 @@ namespace MoneyApp.Repository.Tests
             // Arrange
             TransactionModel model = MoqTransactions.FirstOrDefault();
             var mock = new Mock<ITransactionRepository>();
-            mock.Setup(a => a.Post(ref model)).Returns(-1);
+            mock.Setup(a => a.Insert(ref model)).Returns(TransactionStatus.NotFound);
             TransactionController controller = new TransactionController(mock.Object);
             // Act
             var result = controller.Post(model);
@@ -160,7 +161,7 @@ namespace MoneyApp.Repository.Tests
             // Arrange
             TransactionModel model = MoqTransactions.FirstOrDefault();            
             var mock = new Mock<ITransactionRepository>();
-            mock.Setup(a => a.Post(ref model)).Returns(0);
+            mock.Setup(a => a.Insert(ref model)).Returns(TransactionStatus.FailedToWriteTransaction);
             TransactionController controller = new TransactionController(mock.Object);
             // Act
             var result = controller.Post(model);

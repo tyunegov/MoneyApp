@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MoneyApp.Models;
+using MoneyApp.Other;
 using MoneyApp.Repository;
 using System;
 using System.Collections.Generic;
@@ -26,9 +27,9 @@ namespace MoneyApp.Controllers
         [Route("Post")]
         public IActionResult Post([FromBody]TransactionModel transaction)
         {
-                int result = repository.Post(ref transaction);
-                if (result == -1) return NotFound($"Type not found by id {transaction.Type.Id}");
-                if (result == 0) return BadRequest($"Failed to write transaction");
+                TransactionStatus result = repository.Insert(ref transaction);
+                if (result == TransactionStatus.NotFound) return NotFound($"Type not found by id {transaction.Type.Id}");
+                if (result == TransactionStatus.FailedToWriteTransaction) return BadRequest($"Failed to write transaction");
                 return Created("", transaction);
         }
         #endregion
@@ -58,6 +59,22 @@ namespace MoneyApp.Controllers
             if(transaction==null)
                 return NotFound($"Transaction not found by id {id}");
             return Ok(transaction);
+        }
+        #endregion
+        #region PUT
+        /// <summary>
+        /// Изменение транзакции
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("Put/{id}")]
+        public IActionResult Put(int id, [FromBody] TransactionModel transaction)
+        {
+            TransactionStatus result = repository.Update(id, ref transaction);
+            if (result == TransactionStatus.NotFound) return NotFound($"Type not found by id {transaction.Type.Id}");
+            if (result == 0) return BadRequest($"Failed to write transaction");
+            return Created("", transaction);
         }
         #endregion
         #region Delete
