@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MoneyApp.Models;
-using MoneyAppAPITests.PageObject;
+using MoneyAppAPITests.Helper;
 using RestSharp;
 using RestSharp.Serialization.Json;
 using System;
@@ -13,17 +13,19 @@ namespace MoneyAppAPI.Controllers.Tests
     public class TransactionControllerTests
     {
         readonly RestClient restClient;
+        delegate void Message(); // 1. Объявляем делегат
+        static int[] nums5 = { 1, 2, 3, 5 };
 
         public TransactionControllerTests()
         {
-            restClient = TransactionPage.RestClient;
+            restClient = TransactionHelper.RestClient;
         }
         #region GetAll
         [TestMethod()]
         public void GetAllShouldStatusOk()
         {
             //Act
-            IRestResponse response = restClient.Execute(TransactionPage.GetAll);
+            IRestResponse response = restClient.Execute(TransactionHelper.GetAll);
             // Assert
             Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
         }
@@ -32,7 +34,7 @@ namespace MoneyAppAPI.Controllers.Tests
         public void GetAllReturnListTransactionModel()
         {
             //Act
-            IRestResponse response = restClient.Execute(TransactionPage.GetAll);
+            IRestResponse response = restClient.Execute(TransactionHelper.GetAll);
             IEnumerable<TransactionModel> locationResponse = new JsonDeserializer().Deserialize<IEnumerable<TransactionModel>>(response);
             // Assert
             Assert.AreEqual(response.StatusCode, HttpStatusCode.OK, "Status OK");
@@ -44,7 +46,7 @@ namespace MoneyAppAPI.Controllers.Tests
         public void Get1ReturnTransactionModel()
         {
             //Act
-            IRestResponse response = restClient.Execute(TransactionPage.Get1Ok);
+            IRestResponse response = restClient.Execute(TransactionHelper.Get1Ok);
             TransactionModel locationResponse = new JsonDeserializer().Deserialize<TransactionModel>(response);
             // Assert
             Assert.AreEqual(response.StatusCode, HttpStatusCode.OK, "Status OK");
@@ -55,7 +57,7 @@ namespace MoneyAppAPI.Controllers.Tests
         public void Get0ShouldNotFound()
         {
             //Act
-            IRestResponse response = restClient.Execute(TransactionPage.Get0NotFound);
+            IRestResponse response = restClient.Execute(TransactionHelper.Get0NotFound);
             // Assert
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode, "Статус NotFound");
             Assert.AreEqual(response.Content, "\"Transaction not found by id 0\"");
@@ -66,7 +68,7 @@ namespace MoneyAppAPI.Controllers.Tests
         public void Delete0ShouldNotFound()
         {
             //Act
-            IRestResponse response = restClient.Execute(TransactionPage.Delete0NotFound);
+            IRestResponse response = restClient.Execute(TransactionHelper.Delete0NotFound);
             // Assert
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode, "Статус NotFound");
             Assert.AreEqual(response.Content, "\"Transaction not found by id 0\"");
@@ -77,17 +79,17 @@ namespace MoneyAppAPI.Controllers.Tests
         public void PostShouldFieldIsRequired()
         {
             //Act
-            IRestResponse response = restClient.Execute(TransactionPage.PostNotFound);
+            IRestResponse response = restClient.Execute(TransactionHelper.PostNotFound);
             
             // Assert
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode,  "Статус NotFound");
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode, "Статус BadRequest");
         }
 
         [TestMethod()]
         public void PostShouldStatusOK()
         {
             //Act
-            IRestResponse response = restClient.Execute(TransactionPage.PostOk);
+            IRestResponse response = restClient.Execute(TransactionHelper.PostOk);
             TransactionModel locationResponse = new JsonDeserializer().Deserialize<TransactionModel>(response);
             // Assert
             Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
@@ -98,11 +100,24 @@ namespace MoneyAppAPI.Controllers.Tests
         public void PostShouldTypeNotFound()
         {
             //Act
-            IRestResponse response = restClient.Execute(TransactionPage.PostTypeNotFound);
+            IRestResponse response = restClient.Execute(TransactionHelper.PostTypeNotFound);
 
             // Assert
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode, "Статус NotFound");
-            Assert.AreEqual(response.Content, "\"Type not found by id 0\"");
+            Assert.AreEqual(response.Content, "\"Type not found by id -1\"");
+        }
+        [DataTestMethod]
+        [DataRow("PutWithoutType")]
+        [DataRow("PutWithoutDate")] 
+        [DataRow("PutWithoutAmountIs0")]
+        public void PutRequestFieldsShouldBadRequest(string request)
+        {
+            IRestRequest rest = TransactionHelper.FakeRestRequest[request];
+            //Act
+            IRestResponse response = restClient.Execute(TransactionHelper.FakeRestRequest[request]);
+
+            // Assert
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode, "Статус BadRequest");
         }
         #endregion
     }

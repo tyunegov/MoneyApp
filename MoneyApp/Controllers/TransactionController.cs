@@ -65,6 +65,7 @@ namespace MoneyApp.Controllers
         /// <summary>
         /// Изменение транзакции
         /// </summary>
+        /// <param name="id"></param>
         /// <param name="transaction"></param>
         /// <returns></returns>
         [HttpPut]
@@ -72,8 +73,7 @@ namespace MoneyApp.Controllers
         public IActionResult Put(int id, [FromBody] TransactionModel transaction)
         {
             TransactionStatus result = repository.Update(id, ref transaction);
-            if (result == TransactionStatus.NotFound) return NotFound($"Type not found by id {transaction.Type.Id}");
-            if (result == 0) return BadRequest($"Failed to write transaction");
+            if (result == TransactionStatus.NotFound) return NotFound($"Transaction not found by id {transaction.Type.Id}");
             return Created("", transaction);
         }
         #endregion

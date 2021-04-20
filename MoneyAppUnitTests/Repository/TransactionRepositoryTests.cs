@@ -170,5 +170,35 @@ namespace MoneyApp.Repository.Tests
             Assert.AreEqual("Failed to write transaction", ((BadRequestObjectResult)result).Value, "Failed to write transaction");
         }
         #endregion
+
+        #region PUT
+        [TestMethod()]
+        public void Put0ShouldNotFound()
+        {
+            // Arrange
+            TransactionModel model = MoqTransactions.FirstOrDefault();
+            var mock = new Mock<ITransactionRepository>();
+            mock.Setup(a => a.Update(model.Id, ref model)).Returns(TransactionStatus.NotFound);
+            TransactionController controller = new TransactionController(mock.Object);
+            // Act
+            var result = controller.Put(model.Id, model);
+            // Assert
+            Assert.IsTrue(result is NotFoundObjectResult, "NotFoundObjectResult");
+            Assert.AreEqual($"Transaction not found by id {model.Type.Id}", ((NotFoundObjectResult)result).Value, "Transaction not found by id");
+        }
+
+        public void Put0ShouldCreated()
+        {
+            // Arrange
+            TransactionModel model = MoqTransactions.FirstOrDefault();
+            var mock = new Mock<ITransactionRepository>();
+            mock.Setup(a => a.Update(model.Id, ref model)).Returns(TransactionStatus.Success);
+            TransactionController controller = new TransactionController(mock.Object);
+            // Act
+            var result = controller.Put(model.Id, model);
+            // Assert
+            Assert.IsTrue(result is CreatedResult, "Created result");
+        }
+        #endregion
     }
 }
