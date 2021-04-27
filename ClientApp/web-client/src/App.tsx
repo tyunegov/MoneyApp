@@ -1,13 +1,20 @@
+import React from 'react';
+import axios from 'axios';
 import logo from './logo.svg';
 import './App.css';
 
+async function getT(){
+console.log(await axios.get(`Transaction/Get/1`))
+}
+
 function App() {
+  getT();
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Edit <code>src/App.tsx</code> and save to reload.
         </p>
         <a
           className="App-link"
