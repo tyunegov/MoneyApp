@@ -4,7 +4,7 @@ import logo from './logo.svg';
 import './App.css';
 
 async function getT(){
-console.log(await axios.get(`Transaction/Get/1`))
+console.log(await axios.get(`Transaction/All`))
 }
 
 function App() {
