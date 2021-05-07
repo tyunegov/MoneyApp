@@ -3,3 +3,4 @@
 И незамысловатый интерфейс для вывода транзакций (React+typescript)
 ![2](https://user-images.githubusercontent.com/49900945/117339358-52186000-aea8-11eb-9ed2-f0f4cff84723.png)
 Пока задачи пишутся в youtrack.
+test
