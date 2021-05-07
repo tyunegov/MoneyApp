@@ -24,7 +24,8 @@ namespace MoneyApp.Repository
             {
                 return db.Query<TransactionModel, TypeTransactionModel, TransactionModel>(
                     @"SELECT * FROM dbo.Transactions t
-                    inner join TypeTransaction tt on tt.Id = t.TypeId",
+                    inner join TypeTransaction tt on tt.Id = t.TypeId
+                    order by t.Date desc",
                     (t, tt) =>
                     {
                         t.Type = tt;
