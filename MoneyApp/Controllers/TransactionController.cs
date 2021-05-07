@@ -93,17 +93,6 @@ namespace MoneyApp.Controllers
             repository.Delete(id);
             return Ok(transaction);
         }
-
-        [HttpDelete]
-        [Route("123/{id}")]
-        public IActionResult Sdfsdfsfdsfds(int id)
-        {
-            TransactionModel transaction = repository.Get(id);
-            if (transaction == null)
-                return NotFound($"Transaction not found by id {id}");
-            repository.Delete(id);
-            return Ok(transaction);
-        }
         #endregion
     }
 }
