@@ -95,7 +95,7 @@ namespace MoneyApp.Controllers
         }
 
         [HttpDelete]
-        [Route("sdfsdfdsfsdfdsf/{id}")]
+        [Route("123/{id}")]
         public IActionResult Sdfsdfsfdsfds(int id)
         {
             TransactionModel transaction = repository.Get(id);
