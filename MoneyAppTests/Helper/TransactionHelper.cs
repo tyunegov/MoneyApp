@@ -30,7 +30,7 @@ namespace MoneyAppAPITests.Helper
         static TransactionModel transactionAmountIs0 = new TransactionModel() { Date = DateTime.Today, Type = new TypeTransactionModel() { Id = 1, Type = "Доход" }, Amount = 0, Description = "123" };
 
         #endregion
-        public static readonly RestClient RestClient = new RestClient(@"https://localhost:44303/");
+        public static readonly RestClient RestClient = new RestClient(@"http://192.168.0.44/");
         public static readonly RestRequest GetAll = new RestRequest("Transaction/All", Method.GET);
         public static readonly RestRequest Get0NotFound = new RestRequest("Transaction/Get/0", Method.GET);
         public static readonly RestRequest Get1Ok = new RestRequest("Transaction/Get/1", Method.GET);
