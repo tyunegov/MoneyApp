@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
 import './MainContainer.scss'
 import {Container, Row} from 'react-bootstrap';
-import SubMenu from '../SubMenu/SubMenu';
+import SubMenu from '../Content/SubMenu/SubMenu';
 import Content from '../Content/Content';
 
 function MainContainer() {
   return (
-    <div className='wrapper'>      
-    <Container>
+    <Container className='wrapper'>
+      <Row><h1>Финансы</h1></Row>
       <Row><SubMenu/></Row>
       <Row><Content/></Row>  
     </Container>
-    </div>
   );
 }
 

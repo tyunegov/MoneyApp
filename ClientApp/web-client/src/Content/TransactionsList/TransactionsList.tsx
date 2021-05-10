@@ -10,7 +10,7 @@ export class TransactionsList extends Component<{}, { transactions: any}>{
         };
       }
      
-      fillTable(){
+      componentDidMount(){
         getAll().then(
              result => {
                  this.setState({
@@ -27,10 +27,10 @@ export class TransactionsList extends Component<{}, { transactions: any}>{
                })
             })}
            );
+
           }
 
       render() {
-          this.fillTable()
           return (
               <tbody>{this.state.transactions}</tbody>
           );

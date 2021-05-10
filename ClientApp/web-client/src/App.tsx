@@ -9,13 +9,13 @@ function App() {
     <div>
       <div className='app-side'>
         <Row>
-          <Col xs={1} className='side'/>
+          <Col xs={2} className='side'/>
           <Col/>
         </Row>
       </div>
       <div className='app-main'>
         <Row>
-          <Col xs={1}>
+          <Col xs={2}>
             <SideBar/>
           </Col>
           <Col>
