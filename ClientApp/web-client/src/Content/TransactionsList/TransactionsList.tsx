@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import { Component } from 'react'
+import { Table } from 'react-bootstrap';
 import { getAll} from '../../Models/Transaction';
 
 
@@ -17,7 +18,6 @@ export class TransactionsList extends Component<{}, { transactions: any}>{
                transactions: result.map(item=>{
                    return (
                     <tr>
-                     <td>{item.id}</td>
                      <td>{new Date(item.date).toLocaleDateString()}</td>
                      <td>{item.type.type}</td>
                      <td>{item.amount}</td>
@@ -32,7 +32,17 @@ export class TransactionsList extends Component<{}, { transactions: any}>{
 
       render() {
           return (
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Дата</th>
+                  <th>Категория</th>
+                  <th>Сумма</th>
+                  <th>Комментарий</th>            
+                </tr>
+              </thead>    
               <tbody>{this.state.transactions}</tbody>
+              </Table>
           );
         }
       }
