@@ -27,7 +27,6 @@ export class TransactionsList extends Component<{}, { transactions: any}>{
                })
             })}
            );
-
           }
 
       render() {
