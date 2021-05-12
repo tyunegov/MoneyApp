@@ -41,5 +41,6 @@ namespace MoneyAppAPITests.Controllers
             Assert.AreEqual(response.StatusCode, HttpStatusCode.OK, "Status OK");
             Assert.IsTrue(locationResponse is IEnumerable<TypeTransactionModel>, "IEnumerable<TypeTransactionModel>");
         }
+        #endregion
     }
 }
