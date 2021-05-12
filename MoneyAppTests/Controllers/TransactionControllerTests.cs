@@ -13,12 +13,10 @@ namespace MoneyAppAPI.Controllers.Tests
     public class TransactionControllerTests
     {
         readonly RestClient restClient;
-        delegate void Message(); // 1. Объявляем делегат
-        static int[] nums5 = { 1, 2, 3, 5 };
 
         public TransactionControllerTests()
         {
-            restClient = TransactionHelper.RestClient;
+            restClient = RestClientSingleton.RestClient;
         }
         #region GetAll
         [TestMethod()]
