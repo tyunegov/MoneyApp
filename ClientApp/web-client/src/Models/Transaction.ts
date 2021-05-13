@@ -11,5 +11,5 @@ export async function getId():Promise<ITransaction>{
 }
 
 export async function getTypes():Promise<IType[]>{
-    return (await axios.get('/Type/Get')).data;
+    return (await axios.get('/Type/All')).data;
 }

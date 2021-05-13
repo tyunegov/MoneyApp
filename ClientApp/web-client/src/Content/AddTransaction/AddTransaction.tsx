@@ -1,48 +1,45 @@
 import './AddTransaction.scss'
 import { Modal, Button, Row, Container, Dropdown, Form} from 'react-bootstrap';
-import { Component, DOMFactory, HTMLAttributes, HtmlHTMLAttributes, useState } from 'react';
+import { Component} from 'react';
 import { getAll, getTypes } from '../../Models/Transaction';
 
-export class AddTransaction extends Component<{}, {types:any, useState:boolean}>{
+export class AddTransaction extends Component<{}, {showModal:any, types:any}>{
   constructor(props:any) {
         super(props);
-        this.state = {
-          types: <div></div>,
-          useState: false
+        this.state = {     
+          showModal:false,
+          types: <div></div>
         };
       }
-  
-    handleClose(){
-      this.setState({useState:false})
-    }
-
-    handleShow(){
-      this.setState({useState:true})
-    }
 
     componentDidMount(){
       getTypes().then(
            result => {
                this.setState({
              types: result.map(item=>{
-                 return (
-                  <Form.Control as="select" multiple>
+                 return (                  
                   <option>{item.type}</option>
-                </Form.Control>
                  );
              })
           })}
          );
         }
+
+    showModal = () => this.setState((state) => ({ showModal: !state.showModal }));
+
+    save = () => {
+      this.showModal();
+      if(this.state.showModal==true) window.location.reload();
+    }
   
     render(){
     return (
       <>
-        <Button variant="outline-primary" onClick={this.handleShow}>
+        <Button variant="outline-primary" onClick={this.showModal}>
           Добавить
         </Button>
   
-        <Modal show={useState} onHide={this.handleClose}>
+        <Modal show={this.state.showModal} onHide={this.showModal}>
           <Modal.Header closeButton>
             <Modal.Title>Добавить</Modal.Title>
           </Modal.Header>
@@ -61,18 +58,20 @@ export class AddTransaction extends Component<{}, {types:any, useState:boolean}>
                     <input type="number" className={"form-group"}/>
                 </Row>
                 <Row className={"row_displayBlock"} >
-                <Form.Group controlId="exampleForm.ControlSelect2">
-                <Form.Label>Тип транзакции</Form.Label>
-                {this.state.types}
-              </Form.Group>
+                  <Form.Group controlId="exampleForm.ControlSelect2">
+                    <Form.Label>Тип транзакции</Form.Label>
+                    <Form.Control as="select" multiple>
+                      {this.state.types}
+                    </Form.Control>
+                  </Form.Group>
                 </Row>
                 </Container>                
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={this.handleClose}>
+            <Button variant="secondary" onClick={this.showModal}>
               Отмена
             </Button>
-            <Button variant="primary" onClick={this.handleClose}>
+            <Button variant="primary" onClick={this.save}>
               Сохранить
             </Button>
           </Modal.Footer>
