@@ -1,5 +1,6 @@
 import { Component } from 'react'
 import { Table } from 'react-bootstrap';
+import { IType } from '../../Models/IType';
 import { getAll} from '../../Models/Transaction';
 
 
@@ -17,9 +18,9 @@ export class TransactionsList extends Component<{}, { transactions: any}>{
                  this.setState({
                transactions: result.map(item=>{
                    return (
-                    <tr>
-                     <td>{new Date(item.date).toLocaleDateString()}</td>
-                     <td>{item.type.type}</td>
+                    <tr key={item.id}>
+                     <td>{new Date(item.date as Date).toLocaleDateString()}</td>
+                     <td>{(item.type as IType).type}</td>
                      <td>{item.amount}</td>
                      <td>{item.description}</td>                     
                     </tr>

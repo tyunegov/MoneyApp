@@ -1,5 +1,4 @@
 export interface IType {
-    [x: string]: any;
     id: number;
-    type: string;
+    type?: string;
 }

@@ -1,46 +1,32 @@
+import React, { useCallback, useState } from 'react'
+import { Button, Container, Form, Modal, Row } from 'react-bootstrap'
+import { getTTFB } from 'web-vitals'
+import { IType } from '../../Models/IType'
+import { getTypes } from '../../Models/Transaction'
 import './AddTransaction.scss'
-import { Modal, Button, Row, Container, Dropdown, Form} from 'react-bootstrap';
-import { Component} from 'react';
-import { getAll, getTypes } from '../../Models/Transaction';
 
-export class AddTransaction extends Component<{}, {showModal:any, types:any}>{
-  constructor(props:any) {
-        super(props);
-        this.state = {     
-          showModal:false,
-          types: <div></div>
-        };
-      }
+export default function AddTransaction() {
+    const [showModal, setShowModal] = useState(true);
+    const [types] = useState(getTypes().then(
+      result => {
+          result.map(item=>{
+            return (
+             <option>{item.type}</option>
+            );
+          })}));
+    const handleMembersCount = useCallback(() => {
+        setShowModal(true)
+      }, []);
 
-    componentDidMount(){
-      getTypes().then(
-           result => {
-               this.setState({
-             types: result.map(item=>{
-                 return (                  
-                  <option>{item.type}</option>
-                 );
-             })
-          })}
-         );
-        }
 
-    showModal = () => this.setState((state) => ({ showModal: !state.showModal }));
 
-    save = () => {
-      this.showModal();
-      if(this.state.showModal==true) window.location.reload();
-    }
-  
-    render(){
-    return (
-      <>
-        <Button variant="outline-primary" onClick={this.showModal}>
+    return(
+        <>
+        <Button variant="outline-primary" onClick={handleMembersCount}>
           Добавить
         </Button>
-  
-        <Modal show={this.state.showModal} onHide={this.showModal}>
-          <Modal.Header closeButton>
+        <Modal show={showModal} onHide={handleMembersCount}>
+        <Modal.Header closeButton>
             <Modal.Title>Добавить</Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -61,24 +47,21 @@ export class AddTransaction extends Component<{}, {showModal:any, types:any}>{
                   <Form.Group controlId="exampleForm.ControlSelect2">
                     <Form.Label>Тип транзакции</Form.Label>
                     <Form.Control as="select" multiple>
-                      {this.state.types}
+                      {types}
                     </Form.Control>
                   </Form.Group>
                 </Row>
                 </Container>                
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={this.showModal}>
+            <Button variant="secondary" onClick={handleMembersCount}>
               Отмена
             </Button>
-            <Button variant="primary" onClick={this.save}>
+            <Button variant="primary" onClick={handleMembersCount}>
               Сохранить
             </Button>
           </Modal.Footer>
         </Modal>
       </>
-    );
-  }}
-  
-  export default AddTransaction;
-  
+    )
+}

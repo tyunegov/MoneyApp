@@ -1,8 +1,9 @@
 import { IType } from './IType';
 
 export interface ITransaction {
-    amount: string;
-    description:string;
-    date: Date;
-    type: IType;
+    id?: number;
+    amount?: number;
+    description?:string;
+    date?: Date;
+    type?: IType;
 }
