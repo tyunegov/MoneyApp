@@ -1,48 +1,65 @@
 import './AddTransaction.scss'
-import { Modal, Button, Row, Container, Dropdown, Form} from 'react-bootstrap';
-import { Component, DOMFactory, HTMLAttributes, HtmlHTMLAttributes, useState } from 'react';
-import { getAll, getTypes } from '../../Models/Transaction';
+import { Modal, Button, Row, Container, Form} from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import { getTypes } from '../../Models/Transaction';
+import { ErrMessage } from './AddTransactionHelper';
 
-export class AddTransaction extends Component<{}, {types:any, useState:boolean}>{
-  constructor(props:any) {
-        super(props);
-        this.state = {
-          types: <div></div>,
-          useState: false
-        };
-      }
-  
-    handleClose(){
-      this.setState({useState:false})
-    }
+export default function AddTransaction(){
+    const[types, setTypes] = useState(<></>);  
+    const[showModal, handleShowModal] = useState(true);
+    const[amount, setAmount] = useState('');
+    const[date, setDate] = useState('');
+    const[type, setType] = useState(0);
+    const [isError, setIsError] = useState(false)
 
-    handleShow(){
-      this.setState({useState:true})
-    }
+      useEffect(() => {
+        setImmediate(() => 
+          drawTypes()
+        )
+      }, []);
 
-    componentDidMount(){
+     const drawTypes=()=>{
       getTypes().then(
-           result => {
-               this.setState({
-             types: result.map(item=>{
-                 return (
-                  <Form.Control as="select" multiple>
-                  <option>{item.type}</option>
-                </Form.Control>
-                 );
-             })
-          })}
-         );
+        (resp)=>{
+          const types = resp.map(
+              item=>{
+                return(
+                  <option key={item.id} onChange={()=>setType(item.id)}>{item.type}</option>
+                )
+              }
+          )
+          setTypes(
+            <Form.Control as="select" multiple>
+              {types}
+            </Form.Control>
+          );
         }
-  
-    render(){
-    return (
-      <>
-        <Button variant="outline-primary" onClick={this.handleShow}>
+      )
+      }
+
+      function drawError(errMessage: string) {  
+        return isError?
+            (
+            <Row>
+              <label className="alertLabel">{errMessage}</label>
+            </Row>)
+            :null;
+       }
+      
+     function save() {
+       if (amount || date==='')
+        {
+            setIsError(true);
+        }
+     }
+
+    return(
+        <>
+        <Button variant="outline-primary" onClick={()=>handleShowModal(true)}>
           Добавить
         </Button>
   
-        <Modal show={useState} onHide={this.handleClose}>
+        <Modal show={showModal} onHide={()=>handleShowModal(false)}>
           <Modal.Header closeButton>
             <Modal.Title>Добавить</Modal.Title>
           </Modal.Header>
@@ -52,34 +69,36 @@ export class AddTransaction extends Component<{}, {types:any, useState:boolean}>
                     <label>Введите дату:</label>
                 </Row>
                 <Row>
-                    <input type="date" className={"form-group"}/>
+                    <input type="date" className={"form-group"} value={date} onChange={(e)=>setDate(e.target.value)}/>    
                 </Row>
+                  {date===''?drawError(ErrMessage.DataIsEmpty):null}
                 <Row>
                     <label>Введите сумму:</label>
                 </Row>
                 <Row>
-                    <input type="number" className={"form-group"}/>
+                    <input type="number" className={"form-group"} min="0" value={amount} onChange={(e)=>setAmount(e.target.value)}/>                    
                 </Row>
+                  {amount===''?drawError(ErrMessage.AmountIsEmpty):null}
                 <Row className={"row_displayBlock"} >
                 <Form.Group controlId="exampleForm.ControlSelect2">
-                <Form.Label>Тип транзакции</Form.Label>
-                {this.state.types}
+                <Form.Label>Тип операции</Form.Label>
+                {
+                  types
+                }
+                {type===0?drawError(ErrMessage.TypeIsEmpty):null}
               </Form.Group>
                 </Row>
                 </Container>                
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={this.handleClose}>
+            <Button variant="secondary" onClick={()=>handleShowModal(false)}>
               Отмена
             </Button>
-            <Button variant="primary" onClick={this.handleClose}>
+            <Button variant="primary" onClick={save}>
               Сохранить
             </Button>
           </Modal.Footer>
         </Modal>
       </>
-    );
-  }}
-  
-  export default AddTransaction;
-  
+    )
+}
