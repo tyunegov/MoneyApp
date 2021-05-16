@@ -1,24 +1,23 @@
-import { useState } from 'react'
-import { Button, Container, Form, Modal, Row } from 'react-bootstrap'
-import { getTypes } from '../../Models/Transaction'
-import './AddTransaction.scss'
+import './AddTransaction.scss';
+import { getTypes } from '../../Models/Transaction';
 import { Modal, Button, Row, Container, Form} from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import { getTypes } from '../../Models/Transaction';
 import { ErrMessage } from './AddTransactionHelper';
 
 export default function AddTransaction(){
-    const[types, setTypes] = useState(<></>);  
-    const[showModal, handleShowModal] = useState(true);
-    const[amount, setAmount] = useState('');
-    const[date, setDate] = useState('');
-    const[type, setType] = useState(0);
-    const [isError, setIsError] = useState(false)
+    const[types, showSelectTypes] = useState(<></>);  
+    const[isShowModal, handleShowModal] = useState(true);
+    const[amount, handleChangeAmount] = useState('');
+    const[date, handleChangeDate] = useState('');
+    const[type, handleChangeType] = useState(0);
+    const [isError, setIsError] = useState(false);
+    const [isShowSelect, setShowSelect] = useState(false)
 
       useEffect(() => {
         setImmediate(() => 
-          drawTypes()
-        )
+        drawTypes(),
+        ()=>{if (isShowModal==false) setIsError(false)}       
+        )        
       }, []);
 
      const drawTypes=()=>{
@@ -27,14 +26,15 @@ export default function AddTransaction(){
           const types = resp.map(
               item=>{
                 return(
-                  <option key={item.id} onChange={()=>setType(item.id)}>{item.type}</option>
+                  <option key={item.id} value={item.id}>{item.type}</option>
                 )
               }
           )
-          setTypes(
-            <Form.Control as="select" multiple>
+
+          showSelectTypes(
+            <>
               {types}
-            </Form.Control>
+            </>
           );
         }
       )
@@ -50,7 +50,7 @@ export default function AddTransaction(){
        }
       
      function save() {
-       if (amount || date==='')
+       if (amount==='' || date==='' || type===0)
         {
             setIsError(true);
         }
@@ -62,7 +62,7 @@ export default function AddTransaction(){
           Добавить
         </Button>
   
-        <Modal show={showModal} onHide={()=>handleShowModal(false)}>
+        <Modal show={isShowModal} onHide={()=>handleShowModal(false)}>
           <Modal.Header closeButton>
             <Modal.Title>Добавить</Modal.Title>
           </Modal.Header>
@@ -72,25 +72,26 @@ export default function AddTransaction(){
                     <label>Введите дату:</label>
                 </Row>
                 <Row>
-                    <input type="date" className={"form-group"} value={date} onChange={(e)=>setDate(e.target.value)}/>    
+                    <input type="date" className={isError?"":"form-group"} value={date} onChange={(e)=>handleChangeDate(e.target.value)}/>    
                 </Row>
                   {date===''?drawError(ErrMessage.DataIsEmpty):null}
                 <Row>
                     <label>Введите сумму:</label>
                 </Row>
                 <Row>
-                    <input type="number" className={"form-group"} min="0" value={amount} onChange={(e)=>setAmount(e.target.value)}/>                    
+                    <input type="number" className={isError?"":"form-group"} min="0" value={amount} onChange={(e)=>handleChangeAmount(e.target.value)}/>                    
                 </Row>
                   {amount===''?drawError(ErrMessage.AmountIsEmpty):null}
                 <Row className={"row_displayBlock"} >
-                <Form.Group controlId="exampleForm.ControlSelect2">
-                <Form.Label>Тип операции</Form.Label>
+                <label>Тип операции</label>
+                <Form.Control as="select" onChange={(e)=> [handleChangeType(e.target.value as unknown as number), setShowSelect(true)]}>
+                <option key='0' value='0' disabled={isShowSelect}>Выберите значение</option>
                 {
                   types
-                }
-                {type===0?drawError(ErrMessage.TypeIsEmpty):null}
-              </Form.Group>
+                }             
+                </Form.Control>
                 </Row>
+                {type===0?drawError(ErrMessage.TypeIsEmpty):null}
                 </Container>                
           </Modal.Body>
           <Modal.Footer>

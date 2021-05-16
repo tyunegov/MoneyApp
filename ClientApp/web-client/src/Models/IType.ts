@@ -1,4 +1,4 @@
 export interface IType {
     id: number;
-    type?: string;
+    type: string;
 }

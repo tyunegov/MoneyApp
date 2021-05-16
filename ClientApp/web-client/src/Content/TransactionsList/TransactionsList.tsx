@@ -13,21 +13,26 @@ export class TransactionsList extends Component<{}, { transactions: any}>{
       }
      
       componentDidMount(){
-        getAll().then(
-             result => {
-                 this.setState({
-               transactions: result.map(item=>{
-                   return (
-                    <tr key={item.id}>
-                     <td>{new Date(item.date as Date).toLocaleDateString()}</td>
-                     <td>{(item.type as IType).type}</td>
-                     <td>{item.amount}</td>
-                     <td>{item.description}</td>                     
-                    </tr>
-                   );
-               })
-            })}
-           );
+        this.drawTransaction();
+        setInterval(()=>this.drawTransaction(),10000);
+        }
+
+          drawTransaction(){
+            getAll().then(
+              result => {
+                  this.setState({
+                transactions: result.map(item=>{
+                    return (
+                     <tr key={item.id}>
+                      <td>{new Date(item.date as Date).toLocaleDateString()}</td>
+                      <td>{(item.type as IType).type}</td>
+                      <td>{item.amount}</td>
+                      <td>{item.description}</td>                     
+                     </tr>
+                    );
+                })
+             })}
+            );
           }
 
       render() {
