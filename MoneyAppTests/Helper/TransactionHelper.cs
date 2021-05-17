@@ -23,11 +23,11 @@ namespace MoneyAppAPITests.Helper
         }
 
         #region тестовые TransactionModel
-        static TransactionModel transaction = new TransactionModel() {Date=DateTime.Today, Type=new TypeTransactionModel() {Id=1, Type="Доход" }, Amount=100.4M, Description="hgf" };
-        static TransactionModel transactionTypeNotFound = new TransactionModel() { Date = DateTime.Today, Type = new TypeTransactionModel() { Id = -1, Type = "Доход" }, Amount = 100.4M, Description = "123" };
-        static TransactionModel transactionWithoutType = new TransactionModel() { Date = DateTime.Today, Type = null, Amount = 100.4M, Description = "123" };
-        static TransactionModel transactionWithoutDate = new TransactionModel() { Date = null, Type = new TypeTransactionModel() { Id = 1, Type = "Доход" }, Amount = 100.4M, Description = "123" };
-        static TransactionModel transactionAmountIs0 = new TransactionModel() { Date = DateTime.Today, Type = new TypeTransactionModel() { Id = 1, Type = "Доход" }, Amount = 0, Description = "123" };
+        public static TransactionModel transaction = new TransactionModel() {Date=DateTime.Today, Type=new TypeTransactionModel() {Id=1, Type="Доход" }, Amount=100.4M, Description="hgf" };
+        public static TransactionModel transactionTypeNotFound = new TransactionModel() { Date = DateTime.Today, Type = new TypeTransactionModel() { Id = -1, Type = "Доход" }, Amount = 100.4M, Description = "123" };
+        public static TransactionModel transactionWithoutType = new TransactionModel() { Date = DateTime.Today, Type = null, Amount = 100.4M, Description = "123" };
+        public static TransactionModel transactionWithoutDate = new TransactionModel() { Date = null, Type = new TypeTransactionModel() { Id = 1, Type = "Доход" }, Amount = 100.4M, Description = "123" };
+        public static TransactionModel transactionAmountIs0 = new TransactionModel() { Date = DateTime.Today, Type = new TypeTransactionModel() { Id = 1, Type = "Доход" }, Amount = 0, Description = "123" };
 
         #endregion
         public static readonly RestRequest GetAll = new RestRequest("Transaction/All", Method.GET);
