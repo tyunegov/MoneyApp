@@ -9,9 +9,10 @@ namespace MoneyApp.Models
         [Required]
         public DateTime? Date { get; set; }
         [Required]
+        public int TypeId {get; set;}
         public TypeTransactionModel Type { get; set; }
         [Required]
-        [Range(0.001, (double)decimal.MaxValue)]
+        [Range(0.001, 7*10^28)]
         public decimal Amount { get; set; }
         public string Description { get; set; }
 
