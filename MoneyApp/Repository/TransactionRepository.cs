@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace MoneyApp.Repository
 {
-    public class TransactionRepository : ITransactionRepository
+    public class TransactionRepository<TM> : ITransactionRepository<TM> where TM:TransactionModel
     {
         private string connectionString;
 
@@ -18,11 +18,11 @@ namespace MoneyApp.Repository
             this.connectionString = connectionString;
         }
 
-        public IEnumerable<TransactionModel> GetAll()
+        public IEnumerable<TM> GetAll()
         {
             using (IDbConnection db = new SqlConnection(connectionString))
             {
-                return db.Query<TransactionModel, TypeTransactionModel, TransactionModel>(
+                return db.Query<TM, TypeTransactionModel, TM>(
                     @"SELECT * FROM dbo.Transactions t
                     inner join TypeTransaction tt on tt.Id = t.TypeId
                     order by t.Date desc",
@@ -43,13 +43,13 @@ namespace MoneyApp.Repository
             }
         }
 
-        public TransactionModel Get(int id)
+        public TM Get(int id)
         {
             using (IDbConnection db = new SqlConnection(connectionString))
             {
                 var sql = $"SELECT TOP 1 * FROM Transactions t inner join TypeTransaction tt on tt.Id = t.TypeId WHERE t.Id = {id}"; 
 
-                return db.Query<TransactionModel, TypeTransactionModel, TransactionModel>(
+                return db.Query<TM, TypeTransactionModel, TM>(
                     sql, 
                     (t, tt) =>
                     {
@@ -60,7 +60,7 @@ namespace MoneyApp.Repository
             }
         }
 
-        public TransactionStatus Insert(ref TransactionModel transaction)
+        public TransactionStatus Insert(ref TM transaction)
         {
             using (IDbConnection db = new SqlConnection(connectionString))
             {
@@ -91,12 +91,12 @@ namespace MoneyApp.Repository
             }
         }
 
-        public TransactionStatus Update(int id, ref TransactionModel transaction)
+        public TransactionStatus Update(int id, ref TM transaction)
         {
             using (IDbConnection db = new SqlConnection(connectionString))
             {
                 //Проверяем наличие транзакции в БД
-                TransactionModel _transaction = Get(id);
+                TM _transaction = Get(id);
                 //При отсутствии возвращаем -1
                 if (_transaction == null)
                 {
