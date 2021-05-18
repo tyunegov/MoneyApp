@@ -115,7 +115,7 @@ namespace MoneyAppAPI.Controllers.Tests
 
             Assert.AreEqual(TransactionHelper.transaction.Amount, locationResponse.Amount, "Проверка поля Amount");
             Assert.AreEqual(TransactionHelper.transaction.Date, locationResponse.Date, "Проверка поля Date");
-            Assert.AreEqual(TransactionHelper.transaction.Type.Id, locationResponse.TypeId, "Проверка поля TypeId");
+            Assert.AreEqual(TransactionHelper.transaction.Type.Id, locationResponse.Type.Id, "Проверка поля TypeId");
             Assert.AreEqual(TransactionHelper.transaction.Description, locationResponse.Description, "Проверка поля Description");
 
         }

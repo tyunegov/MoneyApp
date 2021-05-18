@@ -29,7 +29,7 @@ namespace MoneyApp.Repository.Tests
         public void GetAllTest()
         {
             // Arrange
-            var mock = new Mock<ITransactionRepository>();
+            var mock = new Mock<ITransactionRepository<TransactionModel>>();
             mock.Setup(a => a.GetAll()).Returns(MoqTransactions);
             TransactionController controller = new TransactionController(mock.Object);
 
@@ -46,7 +46,7 @@ namespace MoneyApp.Repository.Tests
         {
             // Arrange
             TransactionModel model = MoqTransactions.FirstOrDefault();
-            var mock = new Mock<ITransactionRepository>();
+            var mock = new Mock<ITransactionRepository<TransactionModel>>();
             mock.Setup(a => a.Get(1)).Returns(model);
             TransactionController controller = new TransactionController(mock.Object);
             // Act
@@ -61,7 +61,7 @@ namespace MoneyApp.Repository.Tests
         {
             // Arrange
             TransactionModel model = null;
-            var mock = new Mock<ITransactionRepository>();
+            var mock = new Mock<ITransactionRepository<TransactionModel>>();
             mock.Setup(a => a.Get(0)).Returns(model);
             TransactionController controller = new TransactionController(mock.Object);
             // Act
@@ -80,7 +80,7 @@ namespace MoneyApp.Repository.Tests
         {
             // Arrange
             TransactionModel model = MoqTransactions.FirstOrDefault();
-            var mock = new Mock<ITransactionRepository>();
+            var mock = new Mock<ITransactionRepository<TransactionModel>>();
             mock.Setup(a => a.Get(1)).Returns(model);
             TransactionController controller = new TransactionController(mock.Object);
             // Act
@@ -98,7 +98,7 @@ namespace MoneyApp.Repository.Tests
         {
             // Arrange
             TransactionModel model = MoqTransactions.FirstOrDefault();
-            var mock = new Mock<ITransactionRepository>();
+            var mock = new Mock<ITransactionRepository<TransactionModel>>();
             mock.Setup(a => a.Get(1)).Returns(model);
             TransactionController controller = new TransactionController(mock.Object);
             // Act
@@ -115,7 +115,7 @@ namespace MoneyApp.Repository.Tests
         {
             // Arrange
             TransactionModel model = null;
-            var mock = new Mock<ITransactionRepository>();
+            var mock = new Mock<ITransactionRepository<TransactionModel>>();
             mock.Setup(a => a.Get(0)).Returns(model);
             TransactionController controller = new TransactionController(mock.Object);
             // Act
@@ -131,7 +131,7 @@ namespace MoneyApp.Repository.Tests
         {
             // Arrange
             TransactionModel model = MoqTransactions.FirstOrDefault();
-            var mock = new Mock<ITransactionRepository>();
+            var mock = new Mock<ITransactionRepository<TransactionModel>>();
             mock.Setup(a => a.Insert(ref model)).Returns(TransactionStatus.Success);
             TransactionController controller = new TransactionController(mock.Object);
             // Act
@@ -145,7 +145,7 @@ namespace MoneyApp.Repository.Tests
         {
             // Arrange
             TransactionModel model = MoqTransactions.FirstOrDefault();
-            var mock = new Mock<ITransactionRepository>();
+            var mock = new Mock<ITransactionRepository<TransactionModel>>();
             mock.Setup(a => a.Insert(ref model)).Returns(TransactionStatus.NotFound);
             TransactionController controller = new TransactionController(mock.Object);
             // Act
@@ -160,7 +160,7 @@ namespace MoneyApp.Repository.Tests
         {
             // Arrange
             TransactionModel model = MoqTransactions.FirstOrDefault();            
-            var mock = new Mock<ITransactionRepository>();
+            var mock = new Mock<ITransactionRepository<TransactionModel>>();
             mock.Setup(a => a.Insert(ref model)).Returns(TransactionStatus.FailedToWriteTransaction);
             TransactionController controller = new TransactionController(mock.Object);
             // Act
@@ -177,7 +177,7 @@ namespace MoneyApp.Repository.Tests
         {
             // Arrange
             TransactionModel model = MoqTransactions.FirstOrDefault();
-            var mock = new Mock<ITransactionRepository>();
+            var mock = new Mock<ITransactionRepository<TransactionModel>>();
             mock.Setup(a => a.Update(model.Id, ref model)).Returns(TransactionStatus.NotFound);
             TransactionController controller = new TransactionController(mock.Object);
             // Act
@@ -191,7 +191,7 @@ namespace MoneyApp.Repository.Tests
         {
             // Arrange
             TransactionModel model = MoqTransactions.FirstOrDefault();
-            var mock = new Mock<ITransactionRepository>();
+            var mock = new Mock<ITransactionRepository<TransactionModel>>();
             mock.Setup(a => a.Update(model.Id, ref model)).Returns(TransactionStatus.Success);
             TransactionController controller = new TransactionController(mock.Object);
             // Act
