@@ -12,8 +12,8 @@ namespace MoneyApp.Controllers
     [ApiController]
     public class TransactionController : ControllerBase
     {
-        ITransactionRepository repository;
-        public TransactionController(ITransactionRepository repository)
+        ITransactionRepository<TransactionModel> repository;
+        public TransactionController(ITransactionRepository<TransactionModel> repository)
         {
             this.repository = repository;
         }

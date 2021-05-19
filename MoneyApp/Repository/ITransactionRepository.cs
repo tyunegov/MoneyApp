@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace MoneyApp.Repository
 {
-    public interface ITransactionRepository
+    public interface ITransactionRepository<T> where T : TransactionModel
     {
         void Delete(int id);
-        IEnumerable<TransactionModel> GetAll();
-        TransactionModel Get(int id);
-        TransactionStatus Insert(ref TransactionModel transaction);
-        TransactionStatus Update(int id, ref TransactionModel transaction);
+        IEnumerable<T> GetAll();
+        T Get(int id);
+        TransactionStatus Insert(ref T transaction);
+        TransactionStatus Update(int id, ref T transaction);
     }
 }

@@ -13,12 +13,10 @@ namespace MoneyAppAPI.Controllers.Tests
     public class TransactionControllerTests
     {
         readonly RestClient restClient;
-        delegate void Message(); // 1. Объявляем делегат
-        static int[] nums5 = { 1, 2, 3, 5 };
 
         public TransactionControllerTests()
         {
-            restClient = TransactionHelper.RestClient;
+            restClient = RestClientSingleton.RestClient;
         }
         #region GetAll
         [TestMethod()]
@@ -105,6 +103,21 @@ namespace MoneyAppAPI.Controllers.Tests
             // Assert
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode, "Статус NotFound");
             Assert.AreEqual(response.Content, "\"Type not found by id -1\"");
+        }
+
+        [TestMethod()]
+        public void PostShouldReturnData()
+        {
+            //Act
+            IRestResponse response = restClient.Execute(TransactionHelper.PostOk);
+            TransactionModel locationResponse = new JsonDeserializer().Deserialize<TransactionModel>(response);
+            // Assert
+
+            Assert.AreEqual(TransactionHelper.transaction.Amount, locationResponse.Amount, "Проверка поля Amount");
+            Assert.AreEqual(TransactionHelper.transaction.Date, locationResponse.Date, "Проверка поля Date");
+            Assert.AreEqual(TransactionHelper.transaction.Type.Id, locationResponse.Type.Id, "Проверка поля TypeId");
+            Assert.AreEqual(TransactionHelper.transaction.Description, locationResponse.Description, "Проверка поля Description");
+
         }
         [DataTestMethod]
         [DataRow("PutWithoutType")]

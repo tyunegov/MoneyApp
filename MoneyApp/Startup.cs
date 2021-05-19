@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MoneyApp.Models;
 using MoneyApp.Repository;
 using System;
 using System.IO;
@@ -30,7 +31,8 @@ namespace MoneyApp
                 c.IncludeXmlComments(xmlPath);
             });
             string connectionString = @"Data Source=DESCKTOP\SQLEXPRESS;Initial Catalog=MoneyApp;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            services.AddTransient<ITransactionRepository, TransactionRepository>(provider => new TransactionRepository(connectionString));
+            services.AddTransient<ITransactionRepository<TransactionModel>, TransactionRepository<TransactionModel>>(provider => new TransactionRepository<TransactionModel>(connectionString));
+            services.AddTransient<ITypeTransactionRepository, TypeTransactionRepository>(provider => new TypeTransactionRepository(connectionString));
             services.AddControllersWithViews();
         }
 
