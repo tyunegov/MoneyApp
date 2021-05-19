@@ -1,0 +1,14 @@
+.app-side{
+  z-index: -1;
+  position: fixed;
+  width:-webkit-fill-available;
+  .side{
+    background: darkslateblue;
+    height: 100vh;
+  }
+}
+
+.app-main{
+  width: 98%;
+}
+
