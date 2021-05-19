@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import './MainContainer.scss'
 import {Container, Row} from 'react-bootstrap';
 import SubMenu from '../Content/SubMenu/SubMenu';

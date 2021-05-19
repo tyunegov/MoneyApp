@@ -3,7 +3,6 @@ import { getTypes, postTransaction } from '../../Models/Transaction';
 import { Modal, Button, Row, Container, Form} from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { ErrMessage } from './AddTransactionHelper';
-import { IType } from '../../Models/IType';
 
 export default function AddTransaction(){
     const[types, showSelectTypes] = useState(<></>);  
@@ -19,7 +18,7 @@ export default function AddTransaction(){
       useEffect(() => {
         setImmediate(() => 
         drawTypes(),
-        ()=>{if (isShowModal==false) setIsError(false)}       
+        ()=>{if (isShowModal===false) setIsError(false)}       
         )        
       }, []);
 

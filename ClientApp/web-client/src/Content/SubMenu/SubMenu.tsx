@@ -1,6 +1,6 @@
 import React from 'react';
 import './SubMenu.scss'
-import { Nav, Button} from 'react-bootstrap';
+import { Nav} from 'react-bootstrap';
 import AddTransaction from '../AddTransaction/AddTransaction';
 
 function SubMenu() {
