@@ -4,6 +4,6 @@ export interface ITransaction {
     id?: number;
     amount?: number;
     description?:string;
-    date?: Date;
+    date?: string;
     type?: IType;
 }

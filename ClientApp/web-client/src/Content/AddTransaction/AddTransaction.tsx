@@ -1,17 +1,20 @@
 import './AddTransaction.scss';
-import { getTypes } from '../../Models/Transaction';
+import { getTypes, postTransaction } from '../../Models/Transaction';
 import { Modal, Button, Row, Container, Form} from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { ErrMessage } from './AddTransactionHelper';
+import { IType } from '../../Models/IType';
 
 export default function AddTransaction(){
     const[types, showSelectTypes] = useState(<></>);  
     const[isShowModal, handleShowModal] = useState(true);
-    const[amount, handleChangeAmount] = useState('');
+    const[amount, handleChangeAmount] = useState(0);
     const[date, handleChangeDate] = useState('');
-    const[type, handleChangeType] = useState(0);
+    const[typeId, handleChangeTypeId] = useState(0);
+    const[typeValue, handleChangeTypeValue] = useState('string');
     const [isError, setIsError] = useState(false);
-    const [isShowSelect, setShowSelect] = useState(false)
+    const [isShowSelect, setShowSelect] = useState(false);
+    const [description, setDescription] = useState('');
 
       useEffect(() => {
         setImmediate(() => 
@@ -50,10 +53,15 @@ export default function AddTransaction(){
        }
       
      function save() {
-       if (amount==='' || date==='' || type===0)
+       alert(date);
+       if (amount!==0 && typeId!==0 && date!=='')
         {
-            setIsError(true);
+          postTransaction({amount:amount, date:date, type:{id:typeId, type:typeValue}, description:description});
+          setIsError(false);
+          handleShowModal(false);          
+
         }
+        setIsError(true);
      }
 
     return(
@@ -72,26 +80,30 @@ export default function AddTransaction(){
                     <label>Введите дату:</label>
                 </Row>
                 <Row>
-                    <input type="date" className={isError?"":"form-group"} value={date} onChange={(e)=>handleChangeDate(e.target.value)}/>    
+                    <input type="date" className={isError?"":"form-group"} onChange={(e)=>handleChangeDate(e.target.value)}/>   
                 </Row>
-                  {date===''?drawError(ErrMessage.DataIsEmpty):null}
+                {date===''?drawError(ErrMessage.DateIsEmpty):null}
                 <Row>
                     <label>Введите сумму:</label>
                 </Row>
                 <Row>
-                    <input type="number" className={isError?"":"form-group"} min="0" value={amount} onChange={(e)=>handleChangeAmount(e.target.value)}/>                    
+                    <input type="number" className={isError?"":"form-group"} min="0" onChange={(e)=>handleChangeAmount(e.target.value as unknown as number)}/>                    
                 </Row>
-                  {amount===''?drawError(ErrMessage.AmountIsEmpty):null}
+                  {amount===0?drawError(ErrMessage.AmountIsEmpty):null}
                 <Row className={"row_displayBlock"} >
                 <label>Тип операции</label>
-                <Form.Control as="select" onChange={(e)=> [handleChangeType(e.target.value as unknown as number), setShowSelect(true)]}>
+                <Form.Control as="select" onChange={(e)=> [handleChangeTypeId(e.target.value as unknown as number), setShowSelect(true)]}>
                 <option key='0' value='0' disabled={isShowSelect}>Выберите значение</option>
                 {
                   types
                 }             
                 </Form.Control>
                 </Row>
-                {type===0?drawError(ErrMessage.TypeIsEmpty):null}
+                {typeId===0?drawError(ErrMessage.TypeIsEmpty):null}
+                <Row>
+                  <Form.Label>Комментарий</Form.Label>
+                  <Form.Control as="textarea" rows={3} onChange={(e)=>setDescription(e.target.value)}/>
+                </Row>
                 </Container>                
           </Modal.Body>
           <Modal.Footer>

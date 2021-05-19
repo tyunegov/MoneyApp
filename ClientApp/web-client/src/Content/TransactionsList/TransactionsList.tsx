@@ -14,7 +14,7 @@ export class TransactionsList extends Component<{}, { transactions: any}>{
      
       componentDidMount(){
         this.drawTransaction();
-        setInterval(()=>this.drawTransaction(),10000);
+        setInterval(()=>this.drawTransaction(),30000);
         }
 
           drawTransaction(){
@@ -24,7 +24,7 @@ export class TransactionsList extends Component<{}, { transactions: any}>{
                 transactions: result.map(item=>{
                     return (
                      <tr key={item.id}>
-                      <td>{new Date(item.date as Date).toLocaleDateString()}</td>
+                      <td>{item.date}</td>
                       <td>{(item.type as IType).type}</td>
                       <td>{item.amount}</td>
                       <td>{item.description}</td>                     

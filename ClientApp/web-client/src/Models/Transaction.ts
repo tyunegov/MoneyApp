@@ -15,5 +15,9 @@ export async function getTypes():Promise<IType[]>{
 }
 
 export async function postTransaction(transaction:ITransaction) {
-    
+    try {
+        await axios.post('/Transaction/Post', transaction);
+      } catch (e) {
+        console.log(`Request failed: ${e}`);
+      }
 }
