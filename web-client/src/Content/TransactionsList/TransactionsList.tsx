@@ -1,5 +1,6 @@
 import { Component } from 'react'
 import { Table } from 'react-bootstrap';
+import { ITransaction } from '../../Models/ITransaction';
 import { IType } from '../../Models/IType';
 import { getAll} from '../../Models/Transaction';
 
@@ -27,13 +28,18 @@ export class TransactionsList extends Component<{}, { transactions: any}>{
                       <td>{item.date}</td>
                       <td>{(item.type as IType).type}</td>
                       <td>{item.amount}</td>
-                      <td>{item.description}</td>                     
+                      <td>{item.description}</td>   
+                      <td onClick={()=>this.changeTransaction(item)}>Изменить</td>                  
                      </tr>
                     );
                 })
              })}
             );
           }
+
+      changeTransaction(_transaction:ITransaction){
+   //     return <ModalTransaction transaction={_transaction as ITransaction} title="Изменить"  isShow={true}></ModalTransaction>
+      }
 
       render() {
           return (

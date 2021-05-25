@@ -1,15 +1,28 @@
 import './SubMenu.scss'
-import { Nav} from 'react-bootstrap';
-import AddTransaction from '../AddTransaction/AddTransaction';
+import { Button, Nav} from 'react-bootstrap';
+import { useState } from 'react';
+import ModalTransaction from '../ModalTransaction/ModalTransaction';
 
-function SubMenu() {
+
+export default function SubMenu() {
+  const [isShow, setIsShow] = useState(false)
+
+  function Modal(){
+    return(
+      isShow==true?
+      <ModalTransaction transaction={null} title="Изменить" isShow={isShow} refIsHide={setIsShow}/>
+      :null
+    )
+  }
+
   return (
     <Nav className="justify-content-end submenu" activeKey="/home">
           <Nav.Item>
-          <AddTransaction/>
+          <Button variant="outline-primary" onClick={()=>setIsShow(true)}>
+          Добавить
+          </Button>         
+          {Modal()}
           </Nav.Item>
     </Nav>
   );
 }
-
-export default SubMenu;

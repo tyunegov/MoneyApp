@@ -1,24 +1,33 @@
-import './AddTransaction.scss';
+import './ModalTransaction.scss';
 import { getTypes, postTransaction } from '../../Models/Transaction';
 import { Modal, Button, Row, Container, Form} from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import { ErrMessage } from './AddTransactionHelper';
+import { ErrMessage} from './ModalTransactionHelper';
+import { ITransaction } from '../../Models/ITransaction';
 
-export default function AddTransaction(){
+export default function ModalTransaction(props: {transaction:ITransaction|null, title:string, isShow:boolean, refIsHide:React.Dispatch<React.SetStateAction<boolean>>}){
     const[types, showSelectTypes] = useState(<></>);  
-    const[isShowModal, handleShowModal] = useState(false);
-    const[amount, handleChangeAmount] = useState(0);
-    const[date, handleChangeDate] = useState('');
+    const[amount, handleChangeAmount] = useState<number>();
+    const[date, handleChangeDate] = useState<string>('');
     const[typeId, handleChangeTypeId] = useState(0);
     const[typeValue, handleChangeTypeValue] = useState('string');
     const [isError, setIsError] = useState(false);
     const [isShowSelect, setShowSelect] = useState(false);
     const [description, setDescription] = useState('');
+    const [stansaction, setstansaction] = useState<ITransaction>();
+    const [Show, setShow] = useState<boolean>(true);
 
       useEffect(() => {
         setImmediate(() => 
         drawTypes(),
-        ()=>{if (isShowModal===false) setIsError(false)}       
+        ()=>{
+          if(props.transaction!==null){
+            handleChangeAmount(props.transaction.amount as number);
+            setDescription(props.transaction.description as string);
+            handleChangeTypeId(props.transaction.type?.id as number);
+            handleChangeDate(props.transaction.date as string);
+          }
+        }
         )        
       }, []);
 
@@ -51,25 +60,22 @@ export default function AddTransaction(){
             :null;
        }
       
-     function save() {
+     function save() {      
+       alert(stansaction?.amount);
        if (amount!==0 && typeId!==0 && date!=='')
         {
           postTransaction({amount:amount, date:date, type:{id:typeId, type:typeValue}, description:description});
           setIsError(false);
-          handleShowModal(false);          
+    //      setIsShowModalTransaction(false);         
         }
         setIsError(true);
      }
 
     return(
-        <>
-        <Button variant="outline-primary" onClick={()=>handleShowModal(true)}>
-          Добавить
-        </Button>
-  
-        <Modal show={isShowModal} onHide={()=>handleShowModal(false)}>
+        <> 
+        <Modal show={props.isShow} onHide={()=>props.refIsHide(false)}>
           <Modal.Header closeButton>
-            <Modal.Title>Добавить</Modal.Title>
+            <Modal.Title>{props.title}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
               <Container>
@@ -84,9 +90,9 @@ export default function AddTransaction(){
                     <label>Введите сумму:</label>
                 </Row>
                 <Row>
-                    <input type="number" className={isError?"":"form-group"} min="0" onChange={(e)=>handleChangeAmount(e.target.value as unknown as number)}/>                    
+                    <input type="number" className={isError?"":"form-group"} min="0" onChange={(e)=>setstansaction({amount: e.target.value as unknown as number})}/>                    
                 </Row>
-                  {amount===0?drawError(ErrMessage.AmountIsEmpty):null}
+                  {stansaction?.amount? null:drawError(ErrMessage.AmountIsEmpty)}
                 <Row className={"row_displayBlock"} >
                 <label>Тип операции</label>
                 <Form.Control as="select" onChange={(e)=> [handleChangeTypeId(e.target.value as unknown as number), setShowSelect(true)]}>
@@ -104,7 +110,7 @@ export default function AddTransaction(){
                 </Container>                
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={()=>handleShowModal(false)}>
+            <Button variant="secondary" onClick={()=>false}>
               Отмена
             </Button>
             <Button variant="primary" onClick={save}>
