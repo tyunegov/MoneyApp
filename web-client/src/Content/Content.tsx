@@ -1,5 +1,6 @@
+import React from 'react';
 import './Content.scss'
-import {TransactionsList} from './TransactionsList/TransactionsList'
+import TransactionsList from './TransactionsList/TransactionsList';
 
 function Content() {
   return (    

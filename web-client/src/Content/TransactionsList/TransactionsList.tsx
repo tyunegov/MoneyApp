@@ -1,48 +1,54 @@
-import { Component } from 'react'
-import { Table } from 'react-bootstrap';
+import React, { Component } from 'react'
+import { Button, Table } from 'react-bootstrap';
 import { ITransaction } from '../../Models/ITransaction';
 import { IType } from '../../Models/IType';
 import { getAll} from '../../Models/Transaction';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import ModalTransaction from '../ModalTransaction/ModalTransaction';
 
 
-export class TransactionsList extends Component<{}, { transactions: any}>{
-      constructor(props:any) {
-        super(props);
-        this.state = {
-          transactions: <div></div>
-        };
-      }
-     
-      componentDidMount(){
-        this.drawTransaction();
-        setInterval(()=>this.drawTransaction(),30000);
+export default function TransactionsList(){
+      const [transactions, setTransactions] = useState(<div></div>);
+      const [isShow, setIsShow] = useState(true)
+
+      useEffect(() => {
+        setImmediate(() => 
+        {
+        drawTransaction();
         }
+        )        
+      }, []);        
 
-          drawTransaction(){
+        function drawTransaction(){
             getAll().then(
-              result => {
-                  this.setState({
-                transactions: result.map(item=>{
+              (resp)=>{
+                const transactions = resp.map(
+                    item=>{
                     return (
                      <tr key={item.id}>
                       <td>{item.date}</td>
                       <td>{(item.type as IType).type}</td>
                       <td>{item.amount}</td>
                       <td>{item.description}</td>   
-                      <td onClick={()=>this.changeTransaction(item)}>Изменить</td>                  
+                      <Button onClick={()=>changeTransaction(item)}>Изменить</Button>                  
                      </tr>
                     );
                 })
-             })}
-            );
-          }
+                setTransactions(<>{transactions}</>)
+             })}            
 
-      changeTransaction(_transaction:ITransaction){
-   //     return <ModalTransaction transaction={_transaction as ITransaction} title="Изменить"  isShow={true}></ModalTransaction>
+      function changeTransaction(_transaction:ITransaction){
+          return(
+            isShow==true?
+            <ModalTransaction transaction={null} title="Изменить" isShow={isShow} refIsHide={setIsShow}/>
+            :null
+          )
       }
+      
 
-      render() {
-          return (
+      return(
+        <>
             <Table striped bordered hover>
               <thead>
                 <tr>
@@ -52,11 +58,10 @@ export class TransactionsList extends Component<{}, { transactions: any}>{
                   <th>Комментарий</th>            
                 </tr>
               </thead>    
-              <tbody>{this.state.transactions}</tbody>
+              <tbody>{transactions}</tbody>
               </Table>
+        </>
           );
-        }
       }
-    
-
-export default TransactionsList
+      
+      
