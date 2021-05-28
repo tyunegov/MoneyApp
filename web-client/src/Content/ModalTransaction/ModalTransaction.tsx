@@ -9,7 +9,7 @@ import { IType } from '../../Models/IType';
 
 export default function ModalTransaction(props: {transaction:ITransaction|null, title:string, refIsHide:React.Dispatch<React.SetStateAction<boolean>>}){
     const[types, showSelectTypes] = useState(<></>);  
-    const [isError, setIsError] = useState(false);
+    const [isClickSave, setIsClickSave] = useState(false);
     const [isShowSelect, setShowSelect] = useState(false);
     const [_transaction, setTransaction] = useState<ITransaction>({});
     const [isErrorAmount, setIsErrorAmount] = useState(false);
@@ -30,8 +30,8 @@ export default function ModalTransaction(props: {transaction:ITransaction|null, 
 
       useEffect(() => {
         setImmediate(() => 
-        drawTypes(),
-        setTransaction(props.transaction as ITransaction)
+          drawTypes(),
+          setTransaction(props.transaction===null?{}:props.transaction as ITransaction)
         )        
       }, []);
 
@@ -68,7 +68,7 @@ export default function ModalTransaction(props: {transaction:ITransaction|null, 
         }
 
       function drawError(errMessage: string) {  
-        return isError?
+        return isClickSave?
             (
             <Row>
               <label className="alertLabel">{errMessage}</label>
@@ -77,15 +77,22 @@ export default function ModalTransaction(props: {transaction:ITransaction|null, 
        }
       
      function save() {      
-       if(_transaction.amount as number <=0 ) setIsErrorAmount(true);
+       validation();
        if (!isErrorAmount && isErrorDate && isErrorType)
         {
           if(props.title===Title.Add) postTransaction(_transaction);
           if(props.title===Title.Change) editTransaction(props.transaction?.id as number, _transaction);
-          setIsError(false);
+          setIsClickSave(false);
           closeModal();       
         }
-        setIsError(true);
+        setIsClickSave(true);
+     }
+
+     function validation() {
+      console.log(_transaction);
+      if(_transaction.amount as number <=0 || _transaction?.amount === undefined) setIsErrorAmount(true);
+      if(_transaction?.date === undefined) setIsErrorDate(true);
+      if(_transaction?.type === undefined || _transaction?.type.id as number <=0) setIsErrorType(true);
      }
 
      function closeModal(){
@@ -105,7 +112,7 @@ export default function ModalTransaction(props: {transaction:ITransaction|null, 
                 </Row>
                 <Row>
                     <InputGroup>
-                    <FormControl type="date" onChange={(e)=>{setHandleTransaction({date: e.target.value as unknown as Date}); console.log(e.target.value)}} value={moment(_transaction?.date).format('YYYY-MM-DD')}/>
+                    <FormControl type="date" onChange={(e)=>{setHandleTransaction({date: e.target.value as unknown as Date})}} value={_transaction?.date===undefined?'':moment(_transaction?.date).format('YYYY-MM-DD')}/>
                   </InputGroup>  
                 </Row>
                 {isErrorDate?drawError(ErrMessage.DateIsEmpty):null}
