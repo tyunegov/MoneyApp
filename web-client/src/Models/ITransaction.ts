@@ -1,9 +1,9 @@
 import { IType } from './IType';
 
-export interface ITransaction {
+export class ITransaction {
     id?: number;
     amount?: number;
     description?:string;
-    date?: string;
+    date?: Date;
     type?: IType;
 }

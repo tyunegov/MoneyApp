@@ -21,3 +21,11 @@ export async function postTransaction(transaction:ITransaction) {
         console.log(`Request failed: ${e}`);
       }
 }
+
+export async function editTransaction(id:number, transaction:ITransaction) {
+  try {
+      await axios.put(`/Transaction/Put/${id}`, transaction);
+    } catch (e) {
+      console.log(`Request failed: ${e}`);
+    }
+}

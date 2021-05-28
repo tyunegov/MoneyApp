@@ -10,7 +10,7 @@ export default function SubMenu() {
   function Modal(){
     return(
       isShow==true?
-      <ModalTransaction transaction={null} title="Изменить" isShow={isShow} refIsHide={setIsShow}/>
+      <ModalTransaction transaction={null} title="Изменить" refIsHide={setIsShow}/>
       :null
     )
   }

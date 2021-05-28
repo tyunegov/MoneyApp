@@ -6,11 +6,15 @@ import { getAll} from '../../Models/Transaction';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import ModalTransaction from '../ModalTransaction/ModalTransaction';
+import './TransactionList.scss'
+import { Title } from '../ModalTransaction/ModalTransactionHelper';
+import moment from 'moment';
 
 
 export default function TransactionsList(){
       const [transactions, setTransactions] = useState(<div></div>);
-      const [isShow, setIsShow] = useState(true)
+      const [isShow, setIsShow] = useState(false);
+      const [editTransaction, handleEditTransaction] = useState<ITransaction>({});
 
       useEffect(() => {
         setImmediate(() => 
@@ -27,35 +31,41 @@ export default function TransactionsList(){
                     item=>{
                     return (
                      <tr key={item.id}>
-                      <td>{item.date}</td>
+                      <td>{moment(item.date).format('DD.MM.YYYY')}</td>
                       <td>{(item.type as IType).type}</td>
                       <td>{item.amount}</td>
-                      <td>{item.description}</td>   
-                      <Button onClick={()=>changeTransaction(item)}>Изменить</Button>                  
+                      <td>{item.description}</td>  
+                      <td className="td-small"> 
+                        <Button variant="link" size="sm" onClick={()=>{
+                          handleEditTransaction(item);
+                          setIsShow(true)
+                        }
+                        }>{Title.Change}</Button>    
+                      </td>
+                      <td className="td-small"> 
+                        <Button variant="link" size="sm" onClick={()=>{
+                          
+                        }
+                        }>{Title.Delete}</Button>    
+                      </td>              
                      </tr>
                     );
                 })
                 setTransactions(<>{transactions}</>)
-             })}            
-
-      function changeTransaction(_transaction:ITransaction){
-          return(
-            isShow==true?
-            <ModalTransaction transaction={null} title="Изменить" isShow={isShow} refIsHide={setIsShow}/>
-            :null
-          )
-      }
-      
+             })}                  
 
       return(
         <>
-            <Table striped bordered hover>
+        {isShow?<ModalTransaction transaction={editTransaction} title="Изменить" refIsHide={setIsShow}/>:null}
+            <Table hover>
               <thead>
                 <tr>
                   <th>Дата</th>
                   <th>Категория</th>
                   <th>Сумма</th>
-                  <th>Комментарий</th>            
+                  <th>Комментарий</th>      
+                  <th></th>
+                  <th></th>   
                 </tr>
               </thead>    
               <tbody>{transactions}</tbody>

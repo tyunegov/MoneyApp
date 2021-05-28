@@ -1,33 +1,37 @@
 import './ModalTransaction.scss';
-import { getTypes, postTransaction } from '../../Models/Transaction';
-import { Modal, Button, Row, Container, Form} from 'react-bootstrap';
-import { useEffect, useState } from 'react';
-import { ErrMessage} from './ModalTransactionHelper';
+import { editTransaction, getTypes, postTransaction } from '../../Models/Transaction';
+import { Modal, Button, Row, Container, Form, InputGroup, FormControl} from 'react-bootstrap';
+import React, {useEffect, useState } from 'react';
+import { ErrMessage, Title} from './ModalTransactionHelper';
 import { ITransaction } from '../../Models/ITransaction';
+import moment from 'moment';
+import { IType } from '../../Models/IType';
 
-export default function ModalTransaction(props: {transaction:ITransaction|null, title:string, isShow:boolean, refIsHide:React.Dispatch<React.SetStateAction<boolean>>}){
+export default function ModalTransaction(props: {transaction:ITransaction|null, title:string, refIsHide:React.Dispatch<React.SetStateAction<boolean>>}){
     const[types, showSelectTypes] = useState(<></>);  
-    const[amount, handleChangeAmount] = useState<number>();
-    const[date, handleChangeDate] = useState<string>('');
-    const[typeId, handleChangeTypeId] = useState(0);
-    const[typeValue, handleChangeTypeValue] = useState('string');
     const [isError, setIsError] = useState(false);
     const [isShowSelect, setShowSelect] = useState(false);
-    const [description, setDescription] = useState('');
-    const [stansaction, setstansaction] = useState<ITransaction>();
-    const [Show, setShow] = useState<boolean>(true);
+    const [_transaction, setTransaction] = useState<ITransaction>({});
+    const [isErrorAmount, setIsErrorAmount] = useState(false);
+    const [isErrorDate, setIsErrorDate] = useState(false);
+    const [isErrorType, setIsErrorType] = useState(false);
+
+
+    function setHandleTransaction(tr: ITransaction){
+      setTransaction(
+        {
+          amount:tr.amount?tr.amount:_transaction?.amount,
+          description:tr.description?tr.description:_transaction?.description,  
+          type:tr.type?tr.type:_transaction?.type,
+          date:tr.date?tr.date:_transaction?.date
+        }
+      );
+    }
 
       useEffect(() => {
         setImmediate(() => 
         drawTypes(),
-        ()=>{
-          if(props.transaction!==null){
-            handleChangeAmount(props.transaction.amount as number);
-            setDescription(props.transaction.description as string);
-            handleChangeTypeId(props.transaction.type?.id as number);
-            handleChangeDate(props.transaction.date as string);
-          }
-        }
+        setTransaction(props.transaction as ITransaction)
         )        
       }, []);
 
@@ -51,6 +55,18 @@ export default function ModalTransaction(props: {transaction:ITransaction|null, 
       )
       }
 
+      const setType=(i:number)=>{
+        getTypes().then(
+          (resp)=>{
+            if(i>0){
+              setHandleTransaction(
+                {type: resp[i-1]}
+              );
+            }                            
+          }                
+        )
+        }
+
       function drawError(errMessage: string) {  
         return isError?
             (
@@ -61,19 +77,24 @@ export default function ModalTransaction(props: {transaction:ITransaction|null, 
        }
       
      function save() {      
-       alert(stansaction?.amount);
-       if (amount!==0 && typeId!==0 && date!=='')
+       if(_transaction.amount as number <=0 ) setIsErrorAmount(true);
+       if (!isErrorAmount && isErrorDate && isErrorType)
         {
-          postTransaction({amount:amount, date:date, type:{id:typeId, type:typeValue}, description:description});
+          if(props.title===Title.Add) postTransaction(_transaction);
+          if(props.title===Title.Change) editTransaction(props.transaction?.id as number, _transaction);
           setIsError(false);
-    //      setIsShowModalTransaction(false);         
+          closeModal();       
         }
         setIsError(true);
      }
 
+     function closeModal(){
+      props.refIsHide(false);
+     }
+
     return(
         <> 
-        <Modal show={props.isShow} onHide={()=>props.refIsHide(false)}>
+        <Modal show onHide={()=>closeModal()}>
           <Modal.Header closeButton>
             <Modal.Title>{props.title}</Modal.Title>
           </Modal.Header>
@@ -83,34 +104,38 @@ export default function ModalTransaction(props: {transaction:ITransaction|null, 
                     <label>Введите дату:</label>
                 </Row>
                 <Row>
-                    <input type="date" className={isError?"":"form-group"} onChange={(e)=>handleChangeDate(e.target.value)}/>   
+                    <InputGroup>
+                    <FormControl type="date" onChange={(e)=>{setHandleTransaction({date: e.target.value as unknown as Date}); console.log(e.target.value)}} value={moment(_transaction?.date).format('YYYY-MM-DD')}/>
+                  </InputGroup>  
                 </Row>
-                {date===''?drawError(ErrMessage.DateIsEmpty):null}
+                {isErrorDate?drawError(ErrMessage.DateIsEmpty):null}
                 <Row>
                     <label>Введите сумму:</label>
                 </Row>
                 <Row>
-                    <input type="number" className={isError?"":"form-group"} min="0" onChange={(e)=>setstansaction({amount: e.target.value as unknown as number})}/>                    
+                  <InputGroup>
+                    <FormControl type="number" min="0" onChange={(e)=>setHandleTransaction({amount: e.target.value as unknown as number})} value={_transaction?.amount}/>
+                  </InputGroup>            
                 </Row>
-                  {stansaction?.amount? null:drawError(ErrMessage.AmountIsEmpty)}
+                  {isErrorAmount?drawError(ErrMessage.AmountIsEmpty):null}
                 <Row className={"row_displayBlock"} >
                 <label>Тип операции</label>
-                <Form.Control as="select" onChange={(e)=> [handleChangeTypeId(e.target.value as unknown as number), setShowSelect(true)]}>
+                <Form.Control value={_transaction.type?.id} as="select" onChange={(e)=>{setType(e.target.value as unknown as number)}}>
                 <option key='0' value='0' disabled={isShowSelect}>Выберите значение</option>
                 {
                   types
                 }             
                 </Form.Control>
                 </Row>
-                {typeId===0?drawError(ErrMessage.TypeIsEmpty):null}
+                {isErrorType?drawError(ErrMessage.TypeIsEmpty):null}
                 <Row>
                   <Form.Label>Комментарий</Form.Label>
-                  <Form.Control as="textarea" rows={3} onChange={(e)=>setDescription(e.target.value)}/>
+                  <Form.Control value={_transaction.description} as="textarea" rows={3} onChange={(e)=>setHandleTransaction({description: e.target.value})}/>
                 </Row>
                 </Container>                
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={()=>false}>
+            <Button variant="secondary" onClick={()=>closeModal()}>
               Отмена
             </Button>
             <Button variant="primary" onClick={save}>

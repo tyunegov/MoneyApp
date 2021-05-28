@@ -9,5 +9,6 @@ export enum ErrMessage{
 
 export enum Title{
     Change="Изменить", 
-    Add="Добавить"
+    Add="Добавить",
+    Delete="Удалить"
 }
