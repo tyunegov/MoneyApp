@@ -29,3 +29,11 @@ export async function editTransaction(id:number, transaction:ITransaction) {
       console.log(`Request failed: ${e}`);
     }
 }
+
+export async function deleteTransaction(id:number) {
+  try {
+      await axios.delete(`/Transaction/Delete/${id}`);
+    } catch (e) {
+      console.log(`Request failed: ${e}`);
+    }
+}

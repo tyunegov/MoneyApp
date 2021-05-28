@@ -2,19 +2,21 @@ import React, { Component } from 'react'
 import { Button, Table } from 'react-bootstrap';
 import { ITransaction } from '../../Models/ITransaction';
 import { IType } from '../../Models/IType';
-import { getAll} from '../../Models/Transaction';
+import { deleteTransaction, getAll} from '../../Models/Transaction';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import ModalTransaction from '../ModalTransaction/ModalTransaction';
 import './TransactionList.scss'
 import { Title } from '../ModalTransaction/ModalTransactionHelper';
 import moment from 'moment';
+import DeleteTransaction from '../DeleteTransaction/DeleteTransaction';
 
 
 export default function TransactionsList(){
       const [transactions, setTransactions] = useState(<div></div>);
-      const [isShow, setIsShow] = useState(false);
+      const [isShowModalEdit, setIsShowModalEdit] = useState(false);
       const [editTransaction, handleEditTransaction] = useState<ITransaction>({});
+      const [isShowModalDelete, setIsShowModalDelete] = useState(false);
 
       useEffect(() => {
         setImmediate(() => 
@@ -38,13 +40,14 @@ export default function TransactionsList(){
                       <td className="td-small"> 
                         <Button variant="link" size="sm" onClick={()=>{
                           handleEditTransaction(item);
-                          setIsShow(true)
+                          setIsShowModalEdit(true);
                         }
                         }>{Title.Change}</Button>    
                       </td>
                       <td className="td-small"> 
                         <Button variant="link" size="sm" onClick={()=>{
-                          
+                          handleEditTransaction(item);
+                          setIsShowModalDelete(true);
                         }
                         }>{Title.Delete}</Button>    
                       </td>              
@@ -56,7 +59,8 @@ export default function TransactionsList(){
 
       return(
         <>
-        {isShow?<ModalTransaction transaction={editTransaction} title="Изменить" refIsHide={setIsShow}/>:null}
+        {isShowModalEdit?<ModalTransaction transaction={editTransaction} title="Изменить" refIsHide={setIsShowModalEdit}/>:null}
+        {isShowModalDelete?<DeleteTransaction id={editTransaction.id as number} refIsHide={setIsShowModalDelete}/>:null}
             <Table hover>
               <thead>
                 <tr>
