@@ -41,6 +41,16 @@ namespace MoneyAppAPITests.Controllers
             Assert.AreEqual(response.StatusCode, HttpStatusCode.OK, "Status OK");
             Assert.IsTrue(locationResponse is IEnumerable<TypeTransactionModel>, "IEnumerable<TypeTransactionModel>");
         }
+
+        [TestMethod()]
+        public void GetAllCount()
+        {
+            //Act
+            IRestResponse response = restClient.Execute(TypeTransactionHelper.GetAll);
+            IEnumerable<TypeTransactionModel> locationResponse = new JsonDeserializer().Deserialize<IEnumerable<TypeTransactionModel>>(response);
+            // Assert
+            Assert.AreEqual(locationResponse.Count(), 3);
+        }
         #endregion
     }
 }
