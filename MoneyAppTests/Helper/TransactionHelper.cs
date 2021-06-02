@@ -34,6 +34,7 @@ namespace MoneyAppAPITests.Helper
         public static readonly RestRequest Get0NotFound = new RestRequest("Transaction/Get/0", Method.GET);
         public static readonly RestRequest Get1Ok = new RestRequest("Transaction/Get/1", Method.GET);
         public static readonly RestRequest Delete0NotFound = new RestRequest("Transaction/Delete/0", Method.DELETE);
+        public static RestRequest DeleteStatusOk(int id) => new RestRequest($"Transaction/Delete/{id}", Method.DELETE);
         public static readonly IRestRequest PostOk = Request("Transaction/Post", Method.POST, transaction);
         public static readonly IRestRequest PostTypeNotFound = Request("Transaction/Post", Method.POST, transactionTypeNotFound);
         public static readonly IRestRequest PostNotFound = Request("Transaction/Post", Method.POST, null);

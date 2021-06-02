@@ -39,7 +39,7 @@ namespace MoneyApp.Repository
         {
             using (IDbConnection db = new SqlConnection(connectionString))
             {
-                db.Execute($"DELETE FROM Users WHERE Id = {id}");
+                db.Execute($"DELETE FROM Transactions WHERE Id = {id}");
             }
         }
 
