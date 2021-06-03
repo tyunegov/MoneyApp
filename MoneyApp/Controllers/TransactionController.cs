@@ -12,6 +12,12 @@ namespace MoneyApp.Controllers
     [ApiController]
     public class TransactionController : ControllerBase
     {
+        public class DateForGroupAmount
+        {
+            public DateTime StartDate { get; set; }
+            public DateTime? EndDate { get; set; }
+        }
+
         ITransactionRepository<TransactionModel> repository;
         public TransactionController(ITransactionRepository<TransactionModel> repository)
         {
@@ -24,7 +30,6 @@ namespace MoneyApp.Controllers
         /// <param name="transaction"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("Post")]
         public IActionResult Post([FromBody]TransactionModel transaction)
         {
                 TransactionStatus result = repository.Insert(ref transaction);
@@ -40,7 +45,7 @@ namespace MoneyApp.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("All")]
+        [Route("History")]
         public IEnumerable<TransactionModel> GetAll()
         {
             return repository.GetAll();
@@ -52,13 +57,28 @@ namespace MoneyApp.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("Get/{id}")]
+        [Route("{id}")]
         public IActionResult Get(int id)
         {
             TransactionModel transaction = repository.Get(id);
             if(transaction==null)
                 return NotFound($"Transaction not found by id {id}");
             return Ok(transaction);
+        }
+
+        /// <summary>
+        /// Получить транзакции по Id
+        /// </summary>
+     //   /// <param name="dateForGroupAmount"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Report/Time-stage")]
+        public IActionResult ReportTimeStage([FromHeader]DateForGroupAmount dateForGroupAmount)
+        {
+            if (dateForGroupAmount.EndDate == null) dateForGroupAmount.EndDate = dateForGroupAmount.StartDate;
+           if (dateForGroupAmount.StartDate > dateForGroupAmount.EndDate) return BadRequest($"Дата начала отчетного периода не может быть больше даты окончания отчетного периода");
+                var v = repository.Period<AmountGroupTypeDTOModel>(dateForGroupAmount.StartDate, dateForGroupAmount.EndDate.Value);
+            return Ok(v);
         }
         #endregion
         #region PUT

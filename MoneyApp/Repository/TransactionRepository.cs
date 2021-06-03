@@ -113,5 +113,35 @@ namespace MoneyApp.Repository
                 return TransactionStatus.Success;
             }
         }
+
+        public IEnumerable<AGroupT> Period<AGroupT>(DateTime startDate, DateTime endDate) where AGroupT : AmountGroupTypeDTOModel
+        {
+            using (IDbConnection db = new SqlConnection(connectionString))
+            {
+                return db.Query<AGroupT, TypeTransactionModel, AGroupT>(
+                    @"SELECT t.TypeId, SUM(t.Amount) as Amount, tt.Id, tt.Type 
+                    FROM [MoneyApp].[dbo].[Transactions] t
+                    INNER JOIN TypeTransaction tt on tt.Id = t.TypeId
+                    WHERE [Date]>='01.05.2020'
+                    AND [Date]<='31.05.2022'
+                    group by t.TypeId,tt.Id, tt.Type",
+                    (t, tt) =>
+                    {
+                        t.Type = tt;
+                        return t;
+                    }
+                    );
+                //return db.Query<AGroupT, TypeTransactionModel, AGroupT>(
+                //    @"SELECT tt.Id, tt.Type, t.Amount FROM dbo.Transactions t
+                //    inner join TypeTransaction tt on tt.Id = t.TypeId
+                //    order by t.Date desc",
+                //    (t, tt) =>
+                //    {
+                //        t.Type = tt;
+                //        return t;
+                //    }
+                //    );
+            }
+        }
     }
 }

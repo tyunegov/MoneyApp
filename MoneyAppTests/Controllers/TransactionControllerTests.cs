@@ -77,7 +77,6 @@ namespace MoneyAppAPI.Controllers.Tests
         {
             //Act
             IRestResponse response = restClient.Execute(TransactionHelper.PostNotFound);
-            
             // Assert
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode, "Статус BadRequest");
         }
