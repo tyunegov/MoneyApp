@@ -4,6 +4,7 @@ using MoneyApp.Other;
 using MoneyApp.Repository;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace MoneyApp.Controllers
 {
@@ -12,12 +13,6 @@ namespace MoneyApp.Controllers
     [ApiController]
     public class TransactionController : ControllerBase
     {
-        public class DateForGroupAmount
-        {
-            public DateTime StartDate { get; set; }
-            public DateTime? EndDate { get; set; }
-        }
-
         ITransactionRepository<TransactionModel> repository;
         public TransactionController(ITransactionRepository<TransactionModel> repository)
         {
@@ -72,13 +67,19 @@ namespace MoneyApp.Controllers
      //   /// <param name="dateForGroupAmount"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("Report/Time-stage")]
-        public IActionResult ReportTimeStage([FromHeader]DateForGroupAmount dateForGroupAmount)
+        [Route("Report/Period")]
+        public IActionResult ReportPeriod([Required]DateTime startDate, DateTime? endDate)
         {
-            if (dateForGroupAmount.EndDate == null) dateForGroupAmount.EndDate = dateForGroupAmount.StartDate;
-           if (dateForGroupAmount.StartDate > dateForGroupAmount.EndDate) return BadRequest($"Дата начала отчетного периода не может быть больше даты окончания отчетного периода");
-                var v = repository.Period<AmountGroupTypeDTOModel>(dateForGroupAmount.StartDate, dateForGroupAmount.EndDate.Value);
-            return Ok(v);
+           if (endDate == null) endDate = startDate;
+           if (startDate > endDate) return BadRequest($"Дата начала отчетного периода не может быть больше даты окончания отчетного периода");
+            IEnumerable<AmountGroupTypeDTOModel> aGroupT = repository.Period<AmountGroupTypeDTOModel>(startDate, endDate.Value);
+            ReportPeriodDTOModel dto = new ReportPeriodDTOModel()
+            {
+                StartDate = startDate,
+                EndDate = endDate.Value,
+                AmountGroupType = aGroupT
+            };
+            return Ok(dto);
         }
         #endregion
         #region PUT
