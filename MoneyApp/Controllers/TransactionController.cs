@@ -62,9 +62,10 @@ namespace MoneyApp.Controllers
         }
 
         /// <summary>
-        /// Получить транзакции по Id
+        /// Вывести отчет по транзакциям за определенный период
         /// </summary>
-     //   /// <param name="dateForGroupAmount"></param>
+        /// <param name="startDate">Дата начала отчетного периода</param>
+        /// <param name="endDate">Дата окончания отчетного периода</param>
         /// <returns></returns>
         [HttpGet]
         [Route("Report/Period")]
