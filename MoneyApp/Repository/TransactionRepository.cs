@@ -127,7 +127,7 @@ namespace MoneyApp.Repository
                 return db.Query<AGroupT, TypeTransactionModel, AGroupT>(
                     sql,
                     (t, tt) =>
-                    {
+                    { 
                         t.Type = tt;
                         return t;
                     }
