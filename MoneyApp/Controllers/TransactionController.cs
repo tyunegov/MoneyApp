@@ -74,6 +74,7 @@ namespace MoneyApp.Controllers
            if (endDate == null) endDate = startDate;
            if (startDate > endDate) return BadRequest($"Дата начала отчетного периода не может быть больше даты окончания отчетного периода");
             IEnumerable<AmountGroupTypeDTOModel> aGroupT = repository.Period<AmountGroupTypeDTOModel>(startDate, endDate.Value);
+           if(aGroupT==null) return BadRequest("За данный период не найдено транзакций");
             ReportPeriodDTOModel dto = new ReportPeriodDTOModel()
             {
                 StartDate = startDate,
