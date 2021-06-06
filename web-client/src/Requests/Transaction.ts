@@ -3,11 +3,11 @@ import { ITransaction } from "../Models/ITransaction";
 import { IType } from "../Models/IType";
 
 export async function getAll():Promise<ITransaction[]>{
-   return (await axios.get('/Transaction/All')).data;
+   return (await axios.get('/Transaction/History')).data;
 }
 
-export async function getId():Promise<ITransaction>{
-    return (await axios.get('/Transaction/Get/1')).data;
+export async function getId(id:number):Promise<ITransaction>{
+    return (await axios.get(`/Transaction/${id}`)).data;
 }
 
 export async function getTypes():Promise<IType[]>{
@@ -16,7 +16,7 @@ export async function getTypes():Promise<IType[]>{
 
 export async function postTransaction(transaction:ITransaction) {
     try {
-        await axios.post('/Transaction/Post', transaction);
+        await axios.post('/Transaction', transaction);
       } catch (e) {
         console.log(`Request failed: ${e}`);
       }
