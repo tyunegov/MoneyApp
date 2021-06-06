@@ -1,5 +1,5 @@
 import './ModalTransaction.scss';
-import { editTransaction, getTypes, postTransaction } from '../../Models/Transaction';
+import { editTransaction, getTypes, postTransaction } from '../../Requests/Transaction';
 import { Modal, Button, Row, Container, Form, InputGroup, FormControl} from 'react-bootstrap';
 import React, {useEffect, useState } from 'react';
 import { ErrMessage, Title} from './ModalTransactionHelper';

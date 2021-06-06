@@ -1,6 +1,6 @@
 import axios from "axios";
-import { ITransaction } from "./ITransaction";
-import { IType } from "./IType";
+import { ITransaction } from "../Models/ITransaction";
+import { IType } from "../Models/IType";
 
 export async function getAll():Promise<ITransaction[]>{
    return (await axios.get('/Transaction/All')).data;
