@@ -8,19 +8,17 @@ import './Report.scss';
 
 export default function Rest(){
     const [rest, setRest] = useState<Report>({});
-    const [aGroupT, setAGroupT] = useState(<></>);
 
     useEffect(() => {
         setImmediate(() => 
         {
         report();
-        displayByType();
         }
         )        
       }, []);  
 
-      function report(){
-        reportPeriod().then(
+      async function report(){
+         await reportPeriod().then(
           (resp)=>{
                 setRest(
                   {
@@ -30,32 +28,24 @@ export default function Rest(){
                     rest:resp.rest
                   }
                 )
-            
-            console.log(rest);
           }
         )
       }          
-
-      function displayByType(){
-        const result = rest.amountGroupType?.map((item)=>{
-          return( 
-            <Col xs={3}>
-                <div>{item.type?.type}: {item.amount} рублей</div>
-            </Col>
-          )          
-        })
-        setAGroupT(
-          <>
-            {result}
-          </>
-        )
-      }
       
     return(
         <>
           <h5>Отчет за период c {moment(rest.startDate).format('DD.MM.YYYY')} по {moment(rest.endDate).format('DD.MM.YYYY')} </h5>  
         <Row>
-          {aGroupT}
+          {
+            rest.amountGroupType?.map((item)=>{
+              console.log(item.amount);
+              return( 
+                <Col xs={3}>
+                    <div>{item.type?.type}: {item.amount} рублей</div>
+                </Col>
+              )          
+              })
+          }
         </Row>
         <Row>
           <Col>
