@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Button, Table } from 'react-bootstrap';
 import { ITransaction } from '../../Models/ITransaction';
 import { IType } from '../../Models/IType';
-import { deleteTransaction, getAll} from '../../Models/Transaction';
+import { deleteTransaction, getAll} from '../../Requests/Transaction';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import ModalTransaction from '../ModalTransaction/ModalTransaction';

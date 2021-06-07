@@ -1,4 +1,4 @@
-import { deleteTransaction} from '../../Models/Transaction';
+import { deleteTransaction} from '../../Requests/Transaction';
 import { Modal, Button} from 'react-bootstrap';
 import React from 'react';
 import { Title } from '../ModalTransaction/ModalTransactionHelper';
