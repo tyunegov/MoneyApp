@@ -1,6 +1,11 @@
 import axios from "axios";
 import { ITransaction } from "../Models/ITransaction";
 import { IType } from "../Models/IType";
+import moment from 'moment';
+import { Report } from "../Models/Report";
+
+let _startDate:Date = moment().startOf('month').format('YYYY-MM-DD hh:mm') as unknown as Date;
+let _endDate:Date = moment().endOf('month').format('YYYY-MM-DD hh:mm') as unknown as Date;
 
 export async function getAll():Promise<ITransaction[]>{
    return (await axios.get('/Transaction/History')).data;
@@ -36,4 +41,8 @@ export async function deleteTransaction(id:number) {
     } catch (e) {
       console.log(`Request failed: ${e}`);
     }
+}
+
+export async function reportPeriod(startDate: Date= _startDate,  endDate: Date= _endDate):Promise<Report>{
+  return (await axios.get(`/Transaction/Report/Period?startDate=${startDate}&endDate=${endDate}`)).data;
 }

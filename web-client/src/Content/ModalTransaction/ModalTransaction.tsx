@@ -1,5 +1,5 @@
 import './ModalTransaction.scss';
-import { editTransaction, getTypes, postTransaction } from '../../Requests/Transaction';
+import { editTransaction, getTypes, postTransaction, reportPeriod } from '../../Requests/Transaction';
 import { Modal, Button, Row, Container, Form, InputGroup, FormControl} from 'react-bootstrap';
 import React, {useEffect, useState } from 'react';
 import { ErrMessage, Title} from './ModalTransactionHelper';
@@ -77,6 +77,7 @@ export default function ModalTransaction(props: {transaction:ITransaction|null, 
        }
       
      function save() {      
+      console.log(reportPeriod());
        validation();
        if (!isErrorAmount && isErrorDate && isErrorType)
         {
