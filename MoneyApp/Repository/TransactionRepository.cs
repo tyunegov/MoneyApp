@@ -39,7 +39,7 @@ namespace MoneyApp.Repository
         {
             using (IDbConnection db = new SqlConnection(connectionString))
             {
-                db.Execute($"DELETE FROM Users WHERE Id = {id}");
+                db.Execute($"DELETE FROM Transactions WHERE Id = {id}");
             }
         }
 
@@ -111,6 +111,27 @@ namespace MoneyApp.Repository
                                     $"Description = '{(transaction.Description == null ? _transaction.Description : transaction.Description)}';)";
                 transaction = Get(id);
                 return TransactionStatus.Success;
+            }
+        }
+
+        public IEnumerable<AGroupT> Period<AGroupT>(DateTime startDate, DateTime endDate) where AGroupT : AmountGroupTypeDTOModel
+        {
+            using (IDbConnection db = new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT t.TypeId, SUM(t.Amount) as Amount, tt.Id, tt.Type 
+                    FROM [MoneyApp].[dbo].[Transactions] t
+                    INNER JOIN TypeTransaction tt on tt.Id = t.TypeId " +
+                    $"WHERE [Date]>='{startDate}' " +
+                    $@"AND [Date]<='{endDate} '
+                    group by t.TypeId,tt.Id, tt.Type";
+                return db.Query<AGroupT, TypeTransactionModel, AGroupT>(
+                    sql,
+                    (t, tt) =>
+                    {  
+                        t.Type = tt;
+                        return t;
+                    }
+                    );
             }
         }
     }

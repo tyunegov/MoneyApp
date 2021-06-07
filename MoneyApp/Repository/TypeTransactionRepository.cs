@@ -25,5 +25,14 @@ namespace MoneyApp.Repository
                     @"SELECT * FROM dbo.TypeTransaction t");
             }
         }
+
+        public int GetCount()
+        {
+            using (IDbConnection db = new SqlConnection(connectionString))
+            {
+                return db.Query<int>(
+                    @"SELECT COUNT(Id) FROM dbo.TypeTransaction t").FirstOrDefault();
+            }
+        }
     }
 }

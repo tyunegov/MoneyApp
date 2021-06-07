@@ -13,11 +13,21 @@ namespace MoneyAppAPI.Controllers.Tests
     public class TransactionControllerTests
     {
         readonly RestClient restClient;
+        IRestResponse responsePostOk;
+        TransactionModel locationResponsePostOk;
 
         public TransactionControllerTests()
         {
             restClient = RestClientSingleton.RestClient;
         }
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            responsePostOk = restClient.Execute(TransactionHelper.PostOk);
+            locationResponsePostOk = new JsonDeserializer().Deserialize<TransactionModel>(responsePostOk);
+        }
+
         #region GetAll
         [TestMethod()]
         public void GetAllShouldStatusOk()
@@ -61,24 +71,12 @@ namespace MoneyAppAPI.Controllers.Tests
             Assert.AreEqual(response.Content, "\"Transaction not found by id 0\"");
         }
         #endregion
-        #region Delete/{id}
-        [TestMethod()]
-        public void Delete0ShouldNotFound()
-        {
-            //Act
-            IRestResponse response = restClient.Execute(TransactionHelper.Delete0NotFound);
-            // Assert
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode, "Статус NotFound");
-            Assert.AreEqual(response.Content, "\"Transaction not found by id 0\"");
-        }
-        #endregion
         #region Post
         [TestMethod()]
         public void PostShouldFieldIsRequired()
         {
             //Act
             IRestResponse response = restClient.Execute(TransactionHelper.PostNotFound);
-            
             // Assert
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode, "Статус BadRequest");
         }
@@ -86,12 +84,9 @@ namespace MoneyAppAPI.Controllers.Tests
         [TestMethod()]
         public void PostShouldStatusOK()
         {
-            //Act
-            IRestResponse response = restClient.Execute(TransactionHelper.PostOk);
-            TransactionModel locationResponse = new JsonDeserializer().Deserialize<TransactionModel>(response);
             // Assert
-            Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
-            Assert.IsTrue(locationResponse.Id>0, "Проверка записи Id");
+            Assert.AreEqual(HttpStatusCode.Created, responsePostOk.StatusCode);
+            Assert.IsTrue(locationResponsePostOk.Id>0, "Проверка записи Id");
         }
 
         [TestMethod()]
@@ -108,15 +103,12 @@ namespace MoneyAppAPI.Controllers.Tests
         [TestMethod()]
         public void PostShouldReturnData()
         {
-            //Act
-            IRestResponse response = restClient.Execute(TransactionHelper.PostOk);
-            TransactionModel locationResponse = new JsonDeserializer().Deserialize<TransactionModel>(response);
             // Assert
 
-            Assert.AreEqual(TransactionHelper.transaction.Amount, locationResponse.Amount, "Проверка поля Amount");
-            Assert.AreEqual(TransactionHelper.transaction.Date, locationResponse.Date, "Проверка поля Date");
-            Assert.AreEqual(TransactionHelper.transaction.Type.Id, locationResponse.Type.Id, "Проверка поля TypeId");
-            Assert.AreEqual(TransactionHelper.transaction.Description, locationResponse.Description, "Проверка поля Description");
+            Assert.AreEqual(TransactionHelper.transaction.Amount, locationResponsePostOk.Amount, "Проверка поля Amount");
+            Assert.AreEqual(TransactionHelper.transaction.Date, locationResponsePostOk.Date, "Проверка поля Date");
+            Assert.AreEqual(TransactionHelper.transaction.Type.Id, locationResponsePostOk.Type.Id, "Проверка поля TypeId");
+            Assert.AreEqual(TransactionHelper.transaction.Description, locationResponsePostOk.Description, "Проверка поля Description");
 
         }
         [DataTestMethod]
@@ -131,6 +123,26 @@ namespace MoneyAppAPI.Controllers.Tests
 
             // Assert
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode, "Статус BadRequest");
+        }
+        #endregion
+        #region Delete/{id}
+        [TestMethod()]
+        public void Delete0ShouldNotFound()
+        {
+            //Act
+            IRestResponse response = restClient.Execute(TransactionHelper.Delete0NotFound);
+            // Assert
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode, "Статус NotFound");
+            Assert.AreEqual(response.Content, "\"Transaction not found by id 0\"");
+        }
+        [TestMethod()]
+        public void DeleteShouldStatusOk()
+        {
+            //Act
+            IRestResponse response = restClient.Execute(TransactionHelper.DeleteStatusOk(locationResponsePostOk.Id));
+            IEnumerable<TransactionModel> locationResponse = new JsonDeserializer().Deserialize<IEnumerable<TransactionModel>>(response);
+            // Assert
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode, "Статус Ok");
         }
         #endregion
     }

@@ -9,6 +9,6 @@ namespace MoneyAppAPITests.Helper
 {
     public static class RestClientSingleton
     {
-        public static readonly RestClient RestClient = new RestClient(@"http://192.168.0.44/");
+        public static readonly RestClient RestClient = new RestClient(@"http://192.168.0.43/");
     }
 }

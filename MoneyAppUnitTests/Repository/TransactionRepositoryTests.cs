@@ -23,7 +23,13 @@ namespace MoneyApp.Repository.Tests
                 new TransactionModel { Id=2, Amount=20, Date=DateTime.Now, Description="", Type=new TypeTransactionModel{Id=1, Type="type2" } },
                 new TransactionModel { Id=3, Amount=30, Date=DateTime.Now, Description="", Type=new TypeTransactionModel{Id=1, Type="type3" } },
             };
-        
+
+        private static IEnumerable<AmountGroupTypeDTOModel> MoqAGroupT = new List<AmountGroupTypeDTOModel>
+            {
+                new AmountGroupTypeDTOModel(){Type=new TypeTransactionModel{Id=1, Type="type1" }, Amount=200.32M},
+                new AmountGroupTypeDTOModel(){Type=new TypeTransactionModel{Id=1, Type="type1" }, Amount=100.1M},
+            };
+
         #region GetAll
         [TestMethod()]
         public void GetAllTest()
@@ -69,6 +75,55 @@ namespace MoneyApp.Repository.Tests
             // Assert
             Assert.IsTrue(result is NotFoundObjectResult);
             Assert.AreEqual("Transaction not found by id 0", ((NotFoundObjectResult)result).Value);
+        }
+        #endregion
+        #region Report/TimePeriod
+        [TestMethod()]
+        public void ReportPeriodResultOk()
+        {
+            var startDate = new DateTime();
+            var endDate = DateTime.Now;
+            // Arrange
+            var mock = new Mock<ITransactionRepository<TransactionModel>>();
+            mock.Setup(a => a.Period<AmountGroupTypeDTOModel>(startDate, endDate)).Returns(MoqAGroupT);
+            TransactionController controller = new TransactionController(mock.Object);
+
+            // Act
+            var result = controller.ReportPeriod(startDate,endDate);
+            // Assert
+            mock.Verify(r => r.Period<AmountGroupTypeDTOModel>(startDate,endDate), Times.Once, "Не был вызван метод repository.Period<AmountGroupTypeDTOModel>()");
+            Assert.IsTrue(result is OkObjectResult, "Статус код ОК");
+        }
+        [TestMethod()]
+        public void ReportPeriodExpectedCountAgroupT()
+        {
+            var startDate = new DateTime();
+            var endDate = DateTime.Now;
+            // Arrange
+            var mock = new Mock<ITransactionRepository<TransactionModel>>();
+            mock.Setup(a => a.Period<AmountGroupTypeDTOModel>(startDate, endDate)).Returns(MoqAGroupT);
+            TransactionController controller = new TransactionController(mock.Object);
+
+            // Act
+            var result = controller.ReportPeriod(startDate, endDate);
+            // Assert
+            Assert.AreEqual(MoqAGroupT.Count(), ((result as OkObjectResult).Value as ReportPeriodDTOModel).AmountGroupType.Count(), "Не соответствует количество элементов");
+        }
+
+        [TestMethod()]
+        public void ReportPeriodResultBadRequest()
+        {
+            var startDate = DateTime.Now;
+            var endDate = new DateTime(2000,01,01);
+            // Arrange
+            var mock = new Mock<ITransactionRepository<TransactionModel>>();
+            mock.Setup(a => a.Period<AmountGroupTypeDTOModel>(startDate, endDate)).Returns(MoqAGroupT);
+            TransactionController controller = new TransactionController(mock.Object);
+
+            // Act
+            var result = controller.ReportPeriod(startDate, endDate);
+            // Assert
+            Assert.IsTrue(result is BadRequestObjectResult, "Статус код BadRequest");
         }
         #endregion
         #region Delete(id)

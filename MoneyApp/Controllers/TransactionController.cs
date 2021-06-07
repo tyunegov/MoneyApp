@@ -4,6 +4,8 @@ using MoneyApp.Other;
 using MoneyApp.Repository;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace MoneyApp.Controllers
 {
@@ -24,7 +26,6 @@ namespace MoneyApp.Controllers
         /// <param name="transaction"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("Post")]
         public IActionResult Post([FromBody]TransactionModel transaction)
         {
                 TransactionStatus result = repository.Insert(ref transaction);
@@ -40,7 +41,7 @@ namespace MoneyApp.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("All")]
+        [Route("History")]
         public IEnumerable<TransactionModel> GetAll()
         {
             return repository.GetAll();
@@ -52,13 +53,36 @@ namespace MoneyApp.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("Get/{id}")]
+        [Route("{id}")]
         public IActionResult Get(int id)
         {
             TransactionModel transaction = repository.Get(id);
             if(transaction==null)
                 return NotFound($"Transaction not found by id {id}");
             return Ok(transaction);
+        }
+
+        /// <summary>
+        /// Вывести отчет по транзакциям за определенный период
+        /// </summary>
+        /// <param name="startDate">Дата начала отчетного периода</param>
+        /// <param name="endDate">Дата окончания отчетного периода</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Report/Period")]
+        public IActionResult ReportPeriod([Required]DateTime startDate, DateTime? endDate)
+        {
+           if (endDate == null) endDate = startDate;
+           if (startDate > endDate) return BadRequest($"Дата начала отчетного периода не может быть больше даты окончания отчетного периода");
+            IEnumerable<AmountGroupTypeDTOModel> aGroupT = repository.Period<AmountGroupTypeDTOModel>(startDate, endDate.Value);
+           if(aGroupT==null || aGroupT.Count()==0) return BadRequest("За данный период не найдено транзакций");
+            ReportPeriodDTOModel dto = new ReportPeriodDTOModel()
+            {
+                StartDate = startDate,
+                EndDate = endDate.Value,
+                AmountGroupType = aGroupT
+            };
+            return Ok(dto);
         }
         #endregion
         #region PUT

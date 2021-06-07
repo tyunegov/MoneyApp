@@ -30,13 +30,14 @@ namespace MoneyAppAPITests.Helper
         public static TransactionModel transactionAmountIs0 = new TransactionModel() { Date = DateTime.Today, Type = new TypeTransactionModel() { Id = 1, Type = "Доход" }, Amount = 0, Description = "123" };
 
         #endregion
-        public static readonly RestRequest GetAll = new RestRequest("Transaction/All", Method.GET);
-        public static readonly RestRequest Get0NotFound = new RestRequest("Transaction/Get/0", Method.GET);
-        public static readonly RestRequest Get1Ok = new RestRequest("Transaction/Get/1", Method.GET);
+        public static readonly RestRequest GetAll = new RestRequest("Transaction/History", Method.GET);
+        public static readonly RestRequest Get0NotFound = new RestRequest("Transaction/0", Method.GET);
+        public static readonly RestRequest Get1Ok = new RestRequest("Transaction/1", Method.GET);
         public static readonly RestRequest Delete0NotFound = new RestRequest("Transaction/Delete/0", Method.DELETE);
-        public static readonly IRestRequest PostOk = Request("Transaction/Post", Method.POST, transaction);
-        public static readonly IRestRequest PostTypeNotFound = Request("Transaction/Post", Method.POST, transactionTypeNotFound);
-        public static readonly IRestRequest PostNotFound = Request("Transaction/Post", Method.POST, null);
+        public static RestRequest DeleteStatusOk(int id) => new RestRequest($"Transaction/Delete/{id}", Method.DELETE);
+        public static readonly IRestRequest PostOk = Request("Transaction", Method.POST, transaction);
+        public static readonly IRestRequest PostTypeNotFound = Request("Transaction", Method.POST, transactionTypeNotFound);
+        public static readonly IRestRequest PostNotFound = Request("Transaction", Method.POST, null);
         public static readonly IRestRequest PutWithoutType = Request("Transaction/PUT/1", Method.PUT, transactionWithoutType);
         public static readonly IRestRequest PutWithoutDate = Request("Transaction/PUT/1", Method.PUT, transactionWithoutDate);
         public static readonly IRestRequest PutWithoutAmountIs0 = Request("Transaction/PUT/1", Method.PUT, transactionAmountIs0);
