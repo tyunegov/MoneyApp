@@ -32,7 +32,7 @@ export default function TransactionsList(){
                 const transactions = resp.map(
                     item=>{
                     return (
-                     <tr key={item.id}>
+                     <tr key={item.id} className={item.type?.id==1?'isIncome':''}>
                       <td>{moment(item.date).format('DD.MM.YYYY')}</td>
                       <td>{(item.type as IType).type}</td>
                       <td>{item.amount}</td>

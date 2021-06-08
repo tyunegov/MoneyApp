@@ -17,7 +17,7 @@ export default function Rest(){
         )        
       }, []);  
 
-      async function report(){
+      async function report(){        
          await reportPeriod().then(
           (resp)=>{
                 setRest(
@@ -30,9 +30,18 @@ export default function Rest(){
                 )
           }
         )
-      }          
+      }   
+      
+      function isVisible(): boolean {
+        if(rest?.amountGroupType!==undefined){
+          return true;
+        }
+        return false;
+      }
       
     return(
+        <>
+        {isVisible()?
         <>
           <h5>Отчет за период c {moment(rest.startDate).format('DD.MM.YYYY')} по {moment(rest.endDate).format('DD.MM.YYYY')} </h5>  
         <Row>
@@ -53,5 +62,8 @@ export default function Rest(){
           </Col>
         </Row>
         </>
+        :null}
+        </>
+        
     );
 }
