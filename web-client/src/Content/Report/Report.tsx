@@ -47,7 +47,6 @@ export default function Rest(){
         <Row>
           {
             rest.amountGroupType?.map((item)=>{
-              console.log(item.amount);
               return( 
                 <Col xs={3}>
                     <div>{item.type?.type}: {item.amount} рублей</div>

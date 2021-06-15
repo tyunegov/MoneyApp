@@ -1,16 +1,19 @@
 import './SubMenu.scss'
 import { Button, Nav} from 'react-bootstrap';
 import { useState } from 'react';
-import ModalTransaction from '../ModalTransaction/ModalTransaction';
+import ModalTransaction from '../../Components/ModalTransaction/ModalTransaction';
+import { Title } from '../../Components/ModalTransaction/ModalTransactionHelper';
+import { postTransaction } from '../../Requests/Transaction';
+import { ITransaction } from '../../Models/ITransaction';
 
 
 export default function SubMenu() {
-  const [isShow, setIsShow] = useState(false)
+  const [isShow, setIsShow] = useState(false);
 
   function Modal(){
     return(
       isShow===true?
-      <ModalTransaction transaction={null} title="Изменить" refIsHide={setIsShow}/>
+      <ModalTransaction transaction={null} title={Title.Add} refIsHide={setIsShow} refTransaction={postTransaction}/>
       :null
     )
   }

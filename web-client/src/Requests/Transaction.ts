@@ -3,6 +3,9 @@ import { ITransaction } from "../Models/ITransaction";
 import { IType } from "../Models/IType";
 import moment from 'moment';
 import { Report } from "../Models/Report";
+import React, { useState } from "react";
+import PushNotification from "../Components/PushNotification/PushNotification";
+import { OPERATION_FAILED, OPERATION_SUCCESS } from "./RequestHelper";
 
 let _startDate:Date = moment().startOf('month').format('YYYY-MM-DD hh:mm') as unknown as Date;
 let _endDate:Date = moment().endOf('month').format('YYYY-MM-DD hh:mm') as unknown as Date;
@@ -19,12 +22,14 @@ export async function getTypes():Promise<IType[]>{
     return (await axios.get('/Type/All')).data;
 }
 
-export async function postTransaction(transaction:ITransaction) {
-    try {
-        await axios.post('/Transaction', transaction);
-      } catch (e) {
-        console.log(`Request failed: ${e}`);
-      }
+export async function postTransaction(transaction:ITransaction):Promise<string>{
+  try{
+    await axios.post('/Transaction', transaction);
+    return OPERATION_SUCCESS
+  }
+  catch{
+    return OPERATION_FAILED;
+  }
 }
 
 export async function editTransaction(id:number, transaction:ITransaction) {
