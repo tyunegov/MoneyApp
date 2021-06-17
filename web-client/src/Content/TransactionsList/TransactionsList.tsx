@@ -9,6 +9,7 @@ import './TransactionList.scss'
 import { Title } from '../../Components/ModalTransaction/ModalTransactionHelper';
 import moment from 'moment';
 import DeleteTransaction from '../DeleteTransaction/DeleteTransaction';
+import PushNotification from '../../Components/PushNotification/PushNotification';
 
 
 export default function TransactionsList(){
@@ -16,6 +17,7 @@ export default function TransactionsList(){
       const [isShowModalEdit, setIsShowModalEdit] = useState(false);
       const [selectedTransaction, handleSelectedTransaction] = useState<ITransaction>({});
       const [isShowModalDelete, setIsShowModalDelete] = useState(false);
+      const[state, setState]=useState<string|null>(null);
 
       useEffect(() => {
         setImmediate(() => 
@@ -23,7 +25,11 @@ export default function TransactionsList(){
         drawTransaction();
         }
         )        
-      }, []);      
+      }, []);  
+      
+      useEffect(()=>{
+        setTimeout(drawTransaction, 7000);
+      });
 
         function drawTransaction(){
             getAll().then(
@@ -54,12 +60,17 @@ export default function TransactionsList(){
                     );
                 })
                 setTransactions(<>{transactions}</>)
-             })}                  
+             })}
+             
+      function editSelectTransaction(transaction:ITransaction){
+        return editTransaction(selectedTransaction.id as number, transaction);
+      }
 
       return(
         <>
-        {isShowModalEdit?<ModalTransaction transaction={selectedTransaction} title={Title.Change} refIsHide={setIsShowModalEdit} refTransaction={()=>editTransaction(selectedTransaction.id as number,{})}/>:null}
+        <ModalTransaction key={selectedTransaction.id} isShow={isShowModalEdit} transaction={selectedTransaction} title={Title.Change} refIsHide={setIsShowModalEdit} refTransaction={editSelectTransaction} clickSave={setState}/>
         {isShowModalDelete?<DeleteTransaction id={selectedTransaction.id as number} refIsHide={setIsShowModalDelete}/>:null}
+        <PushNotification text={state} refState={setState}/>
             <Table hover>
               <thead>
                 <tr>

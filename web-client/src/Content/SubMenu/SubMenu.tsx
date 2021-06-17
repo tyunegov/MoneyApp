@@ -4,28 +4,25 @@ import { useState } from 'react';
 import ModalTransaction from '../../Components/ModalTransaction/ModalTransaction';
 import { Title } from '../../Components/ModalTransaction/ModalTransactionHelper';
 import { postTransaction } from '../../Requests/Transaction';
-import { ITransaction } from '../../Models/ITransaction';
+import { useEffect } from 'react';
+import PushNotification from '../../Components/PushNotification/PushNotification';
 
 
 export default function SubMenu() {
   const [isShow, setIsShow] = useState(false);
-
-  function Modal(){
-    return(
-      isShow===true?
-      <ModalTransaction transaction={null} title={Title.Add} refIsHide={setIsShow} refTransaction={postTransaction}/>
-      :null
-    )
-  }
+  const[state, setState]=useState<string|null>(null);
 
   return (
+    <>
+    <PushNotification text={state} refState={setState}/>
     <Nav className="justify-content-end submenu" activeKey="/home">
           <Nav.Item>
           <Button variant="outline-primary" onClick={()=>setIsShow(true)}>
           Добавить
           </Button>         
-          {Modal()}
+          <ModalTransaction title={Title.Add} key={(new Date()).toString()} refIsHide={setIsShow} refTransaction={postTransaction} clickSave={setState} isShow={isShow}/>
           </Nav.Item>
     </Nav>
+    </>
   );
 }
