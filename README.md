@@ -16,3 +16,5 @@
 ![image](https://user-images.githubusercontent.com/49900945/120031456-81327500-c001-11eb-8505-63acb4ccdef0.png)
 ![image](https://user-images.githubusercontent.com/49900945/120031429-75df4980-c001-11eb-982e-444b5915fe54.png)
 
+07.06.2020 Добавлен эндпоинт и отображение суммарных значений за текущий месяц
+![image](https://user-images.githubusercontent.com/49900945/121073211-e8f37780-c7da-11eb-8a4b-b20373fed050.png)
