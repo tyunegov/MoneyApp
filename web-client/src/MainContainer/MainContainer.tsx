@@ -1,17 +1,19 @@
 import './MainContainer.scss'
-import {Container, Row} from 'react-bootstrap';
-import SubMenu from '../Content/SubMenu/SubMenu';
-import Content from '../Content/Content';
-import React from 'react';
-import Rest from '../Content/Report/Report';
+import {Container} from 'react-bootstrap';
+import Transaction from '../Content/Transaction/Transaction';
+import { Switch, Route, Redirect, BrowserRouter } from 'react-router-dom';
+import Stock from '../Content/Stock/Stock';
 
 function MainContainer() {
   return (
     <Container className='wrapper'>
-      <Row><h1>Финансы</h1></Row>
-      <Row><Rest/></Row>
-      <Row><SubMenu/></Row>
-      <Row><Content/></Row>  
+      <BrowserRouter>
+            <Switch>
+              <Route  path='/home' component={Transaction} />
+              <Route path='/stock' component={Stock} />
+              <Redirect from='/' to='/stock'/>
+            </Switch>
+      </BrowserRouter>
     </Container>
   );
 }

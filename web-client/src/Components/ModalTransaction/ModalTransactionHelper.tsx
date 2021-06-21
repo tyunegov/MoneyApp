@@ -1,5 +1,3 @@
-import { useState } from "react";
-import ModalTransaction from "./ModalTransaction";
 
 export enum ErrMessage{
     DateIsEmpty="Необходимо заполнить дату", 

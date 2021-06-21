@@ -1,22 +1,23 @@
-import React, { Component } from 'react'
 import { Button, Table } from 'react-bootstrap';
-import { ITransaction } from '../../Models/ITransaction';
-import { IType } from '../../Models/IType';
-import { deleteTransaction, getAll} from '../../Requests/Transaction';
+import { ITransaction } from '../../../Models/ITransaction';
+import { IType } from '../../../Models/IType';
+import { getAll, editTransaction} from '../../../Requests/Transaction';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import ModalTransaction from '../ModalTransaction/ModalTransaction';
-import './TransactionList.scss'
-import { Title } from '../ModalTransaction/ModalTransactionHelper';
+import ModalTransaction from '../../../Components/ModalTransaction/ModalTransaction';
+import './History.scss'
+import { Title } from '../../../Components/ModalTransaction/ModalTransactionHelper';
 import moment from 'moment';
 import DeleteTransaction from '../DeleteTransaction/DeleteTransaction';
+import PushNotification from '../../../Components/PushNotification/PushNotification';
 
 
-export default function TransactionsList(){
+export default function History(){
       const [transactions, setTransactions] = useState(<div></div>);
       const [isShowModalEdit, setIsShowModalEdit] = useState(false);
-      const [editTransaction, handleEditTransaction] = useState<ITransaction>({});
+      const [selectedTransaction, handleSelectedTransaction] = useState<ITransaction>({});
       const [isShowModalDelete, setIsShowModalDelete] = useState(false);
+      const[state, setState]=useState<string|null>(null);
 
       useEffect(() => {
         setImmediate(() => 
@@ -24,7 +25,11 @@ export default function TransactionsList(){
         drawTransaction();
         }
         )        
-      }, []);        
+      }, []);  
+      
+      useEffect(()=>{
+        setTimeout(drawTransaction, 7000);
+      });
 
         function drawTransaction(){
             getAll().then(
@@ -32,21 +37,21 @@ export default function TransactionsList(){
                 const transactions = resp.map(
                     item=>{
                     return (
-                     <tr key={item.id}>
+                     <tr key={item.id} className={item.type?.id===1?'isIncome':''}>
                       <td>{moment(item.date).format('DD.MM.YYYY')}</td>
                       <td>{(item.type as IType).type}</td>
                       <td>{item.amount}</td>
                       <td>{item.description}</td>  
                       <td className="td-small"> 
                         <Button variant="link" size="sm" onClick={()=>{
-                          handleEditTransaction(item);
+                          handleSelectedTransaction(item);
                           setIsShowModalEdit(true);
                         }
                         }>{Title.Change}</Button>    
                       </td>
                       <td className="td-small"> 
                         <Button variant="link" size="sm" onClick={()=>{
-                          handleEditTransaction(item);
+                          handleSelectedTransaction(item);
                           setIsShowModalDelete(true);
                         }
                         }>{Title.Delete}</Button>    
@@ -55,12 +60,17 @@ export default function TransactionsList(){
                     );
                 })
                 setTransactions(<>{transactions}</>)
-             })}                  
+             })}
+             
+      function editSelectTransaction(transaction:ITransaction){
+        return editTransaction(selectedTransaction.id as number, transaction);
+      }
 
       return(
         <>
-        {isShowModalEdit?<ModalTransaction transaction={editTransaction} title="Изменить" refIsHide={setIsShowModalEdit}/>:null}
-        {isShowModalDelete?<DeleteTransaction id={editTransaction.id as number} refIsHide={setIsShowModalDelete}/>:null}
+        <ModalTransaction key={selectedTransaction.id} isShow={isShowModalEdit} transaction={selectedTransaction} title={Title.Change} refIsHide={setIsShowModalEdit} refTransaction={editSelectTransaction} clickSave={setState}/>
+        {isShowModalDelete?<DeleteTransaction id={selectedTransaction.id as number} refIsHide={setIsShowModalDelete}/>:null}
+        <PushNotification text={state} refState={setState}/>
             <Table hover>
               <thead>
                 <tr>

@@ -1,7 +1,7 @@
-import { deleteTransaction} from '../../Requests/Transaction';
+import { deleteTransaction} from '../../../Requests/Transaction';
 import { Modal, Button} from 'react-bootstrap';
 import React from 'react';
-import { Title } from '../ModalTransaction/ModalTransactionHelper';
+import { Title } from '../../../Components/ModalTransaction/ModalTransactionHelper';
 
 export default function DeleteTransaction(props: {id:number, refIsHide:React.Dispatch<React.SetStateAction<boolean>>}){
     function closeModal(){
@@ -21,7 +21,7 @@ export default function DeleteTransaction(props: {id:number, refIsHide:React.Dis
             <Button variant="secondary" onClick={()=>closeModal()}>
               Отмена
             </Button>
-            <Button variant="danger" onClick={()=>{deleteTransaction(props.id);}}>
+            <Button variant="danger" onClick={()=>{deleteTransaction(props.id); closeModal()}}>
               Удалить
             </Button>
           </Modal.Footer>
