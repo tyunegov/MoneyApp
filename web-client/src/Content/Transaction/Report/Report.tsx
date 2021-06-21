@@ -2,8 +2,8 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { Col } from 'react-bootstrap';
 import Row from 'react-bootstrap/esm/Row';
-import { Report } from '../../Models/Report';
-import { reportPeriod } from '../../Requests/Transaction';
+import { Report } from '../../../Models/Report';
+import { reportPeriod } from '../../../Requests/Transaction';
 import './Report.scss';
 
 export default function Rest(){

@@ -1,18 +1,18 @@
 import { Button, Table } from 'react-bootstrap';
-import { ITransaction } from '../../Models/ITransaction';
-import { IType } from '../../Models/IType';
-import { getAll, editTransaction} from '../../Requests/Transaction';
+import { ITransaction } from '../../../Models/ITransaction';
+import { IType } from '../../../Models/IType';
+import { getAll, editTransaction} from '../../../Requests/Transaction';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import ModalTransaction from '../../Components/ModalTransaction/ModalTransaction';
-import './TransactionList.scss'
-import { Title } from '../../Components/ModalTransaction/ModalTransactionHelper';
+import ModalTransaction from '../../../Components/ModalTransaction/ModalTransaction';
+import './History.scss'
+import { Title } from '../../../Components/ModalTransaction/ModalTransactionHelper';
 import moment from 'moment';
 import DeleteTransaction from '../DeleteTransaction/DeleteTransaction';
-import PushNotification from '../../Components/PushNotification/PushNotification';
+import PushNotification from '../../../Components/PushNotification/PushNotification';
 
 
-export default function TransactionsList(){
+export default function History(){
       const [transactions, setTransactions] = useState(<div></div>);
       const [isShowModalEdit, setIsShowModalEdit] = useState(false);
       const [selectedTransaction, handleSelectedTransaction] = useState<ITransaction>({});

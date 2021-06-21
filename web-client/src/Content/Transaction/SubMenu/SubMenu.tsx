@@ -1,11 +1,11 @@
 import './SubMenu.scss'
 import { Button, Nav} from 'react-bootstrap';
 import { useState } from 'react';
-import ModalTransaction from '../../Components/ModalTransaction/ModalTransaction';
-import { Title } from '../../Components/ModalTransaction/ModalTransactionHelper';
-import { postTransaction } from '../../Requests/Transaction';
+import ModalTransaction from '../../../Components/ModalTransaction/ModalTransaction';
+import { Title } from '../../../Components/ModalTransaction/ModalTransactionHelper';
+import { postTransaction } from '../../../Requests/Transaction';
 import { useEffect } from 'react';
-import PushNotification from '../../Components/PushNotification/PushNotification';
+import PushNotification from '../../../Components/PushNotification/PushNotification';
 
 
 export default function SubMenu() {
@@ -15,7 +15,7 @@ export default function SubMenu() {
   return (
     <>
     <PushNotification text={state} refState={setState}/>
-    <Nav className="justify-content-end submenu" activeKey="/home">
+    <Nav className="justify-content-end submenu">
           <Nav.Item>
           <Button variant="outline-primary" onClick={()=>setIsShow(true)}>
           Добавить
