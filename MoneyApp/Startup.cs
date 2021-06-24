@@ -33,6 +33,7 @@ namespace MoneyApp
             string connectionString = @"Data Source=DESCKTOP\SQLEXPRESS;Initial Catalog=MoneyApp;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             services.AddTransient<ITransactionRepository<TransactionModel>, TransactionRepository<TransactionModel>>(provider => new TransactionRepository<TransactionModel>(connectionString));
             services.AddTransient<ITypeTransactionRepository, TypeTransactionRepository>(provider => new TypeTransactionRepository(connectionString));
+            services.AddTransient<ICategoryRepository<CategoryModel>, CategoryRepository<CategoryModel>>(provider => new CategoryRepository<CategoryModel>(connectionString));
             services.AddControllersWithViews();
         }
 

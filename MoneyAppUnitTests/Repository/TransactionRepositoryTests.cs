@@ -19,15 +19,15 @@ namespace MoneyApp.Repository.Tests
     {
         private static IEnumerable<TransactionModel> MoqTransactions = new List<TransactionModel>
             {
-                new TransactionModel { Id=1, Amount=10, Date=DateTime.Now, Description="", Type=new TypeTransactionModel{Id=1, Type="type1" } },
-                new TransactionModel { Id=2, Amount=20, Date=DateTime.Now, Description="", Type=new TypeTransactionModel{Id=1, Type="type2" } },
-                new TransactionModel { Id=3, Amount=30, Date=DateTime.Now, Description="", Type=new TypeTransactionModel{Id=1, Type="type3" } },
+                new TransactionModel { Id=1, Amount=10, Date=DateTime.Now, Description="", Category=new CategoryModel{Id=1, Name="category1", Type=new TypeTransactionModel{Id=1, Name="type1" }} },
+                new TransactionModel { Id=2, Amount=20, Date=DateTime.Now, Description="", Category=new CategoryModel{Id=2, Name="category2", Type=new TypeTransactionModel{Id=1, Name="type1" }} },
+                new TransactionModel { Id=3, Amount=30, Date=DateTime.Now, Description="", Category=new CategoryModel{Id=3, Name="category3", Type=new TypeTransactionModel{Id=3, Name="type3" }} },
             };
 
         private static IEnumerable<AmountGroupTypeDTOModel> MoqAGroupT = new List<AmountGroupTypeDTOModel>
             {
-                new AmountGroupTypeDTOModel(){Type=new TypeTransactionModel{Id=1, Type="type1" }, Amount=200.32M},
-                new AmountGroupTypeDTOModel(){Type=new TypeTransactionModel{Id=1, Type="type1" }, Amount=100.1M},
+                new AmountGroupTypeDTOModel(){Type=new TypeTransactionModel{Id=1, Name="type1" }, Amount=200.32M},
+                new AmountGroupTypeDTOModel(){Type=new TypeTransactionModel{Id=1, Name="type1" }, Amount=100.1M},
             };
 
         #region GetAll
@@ -207,7 +207,7 @@ namespace MoneyApp.Repository.Tests
             var result = controller.Post(model);
             // Assert
             Assert.IsTrue(result is NotFoundObjectResult);
-            Assert.AreEqual($"Type not found by id {model.Type.Id}", ((NotFoundObjectResult)result).Value, "TypeNotFound");
+            Assert.AreEqual(((NotFoundObjectResult)result).Value, $"Category not found by id {model.Category.Id}", "CategoryNotFound");
         }
 
         [TestMethod()]
@@ -239,7 +239,7 @@ namespace MoneyApp.Repository.Tests
             var result = controller.Put(model.Id, model);
             // Assert
             Assert.IsTrue(result is NotFoundObjectResult, "NotFoundObjectResult");
-            Assert.AreEqual($"Transaction not found by id {model.Type.Id}", ((NotFoundObjectResult)result).Value, "Transaction not found by id");
+            Assert.AreEqual(((NotFoundObjectResult)result).Value, $"Transaction not found by id {model.Id}", "Category not found by id");
         }
 
         public void Put0ShouldCreated()
