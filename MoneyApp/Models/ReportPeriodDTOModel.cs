@@ -21,7 +21,8 @@ namespace MoneyApp.Models
         }
         decimal getAmount(int id)
         {
-            return AmountGroupType.Where(x => x.Type.Id == id).First().Amount;
+            var dto = AmountGroupType.Where(x => x.Type.Id == id).FirstOrDefault();
+            return dto==null?0:dto.Amount;
         }
     }
 }

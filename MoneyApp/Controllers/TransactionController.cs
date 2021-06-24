@@ -29,7 +29,7 @@ namespace MoneyApp.Controllers
         public IActionResult Post([FromBody]TransactionModel transaction)
         {
                 TransactionStatus result = repository.Insert(ref transaction);
-                if (result == TransactionStatus.NotFound) return NotFound($"Type not found by id {transaction.Type.Id}");
+                if (result == TransactionStatus.NotFound) return NotFound($"Category not found by id {transaction.Category.Id}");
                 if (result == TransactionStatus.FailedToWriteTransaction) return BadRequest($"Failed to write transaction");
                 return Created("", transaction);
         }
@@ -72,7 +72,7 @@ namespace MoneyApp.Controllers
         [Route("Report/Period")]
         public IActionResult ReportPeriod([Required]DateTime startDate, DateTime? endDate)
         {
-           if (endDate == null) endDate = startDate;
+           if (endDate == null) endDate = DateTime.Today;
            if (startDate > endDate) return BadRequest($"Дата начала отчетного периода не может быть больше даты окончания отчетного периода");
             IEnumerable<AmountGroupTypeDTOModel> aGroupT = repository.Period<AmountGroupTypeDTOModel>(startDate, endDate.Value);
            if(aGroupT==null || aGroupT.Count()==0) return BadRequest("За данный период не найдено транзакций");
@@ -97,7 +97,7 @@ namespace MoneyApp.Controllers
         public IActionResult Put(int id, [FromBody] TransactionModel transaction)
         {
             TransactionStatus result = repository.Update(id, ref transaction);
-            if (result == TransactionStatus.NotFound) return NotFound($"Transaction not found by id {transaction.Type.Id}");
+            if (result == TransactionStatus.NotFound) return NotFound($"Transaction not found by id {transaction.Category.Id}");
             return Created("", transaction);
         }
         #endregion
