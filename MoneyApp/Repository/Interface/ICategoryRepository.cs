@@ -8,6 +8,7 @@ namespace MoneyApp.Repository
 {
     public interface ICategoryRepository<Category> where Category : CategoryModel
     {
-        IEnumerable<Category> All();
+        IEnumerable<Category> MainCategory(int typeId);
+        IEnumerable<Category> SubCategory(int categoryId);
     }
 }

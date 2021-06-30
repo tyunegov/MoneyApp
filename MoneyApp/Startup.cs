@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MoneyApp.Models;
+using MoneyApp.Other;
 using MoneyApp.Repository;
 using System;
 using System.IO;
@@ -30,10 +31,9 @@ namespace MoneyApp
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
-            string connectionString = @"Data Source=DESCKTOP\SQLEXPRESS;Initial Catalog=MoneyApp;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            services.AddTransient<ITransactionRepository<TransactionModel>, TransactionRepository<TransactionModel>>(provider => new TransactionRepository<TransactionModel>(connectionString));
-            services.AddTransient<ITypeTransactionRepository, TypeTransactionRepository>(provider => new TypeTransactionRepository(connectionString));
-            services.AddTransient<ICategoryRepository<CategoryModel>, CategoryRepository<CategoryModel>>(provider => new CategoryRepository<CategoryModel>(connectionString));
+            services.AddTransient<ITransactionRepository<TransactionModel>, TransactionRepository<TransactionModel>>(provider => new TransactionRepository<TransactionModel>(DB.CONNECTION_STRING));
+            services.AddTransient<ITypeTransactionRepository, TypeTransactionRepository>(provider => new TypeTransactionRepository(DB.CONNECTION_STRING));
+            services.AddTransient<ICategoryRepository<CategoryModel>, CategoryRepository<CategoryModel>>(provider => new CategoryRepository<CategoryModel>(DB.CONNECTION_STRING));
             services.AddControllersWithViews();
         }
 

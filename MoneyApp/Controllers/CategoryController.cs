@@ -19,14 +19,24 @@ namespace MoneyApp.Controllers
             this.repository = repository;
         }
         /// <summary>
-        /// Получить все категории
+        /// Получить основные категории по typeId
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("All")]
-        public IEnumerable<CategoryModel> All()
+        [Route("MainCategory")]
+        public IEnumerable<CategoryModel> MainCategory(int typeId)
         {
-            return repository.All();
+            return repository.MainCategory(typeId);
+        }
+        /// <summary>
+        /// Получить подкатегории по categoryId
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("SubCategory")]
+        public IEnumerable<CategoryModel> SubCategory(int categoryId)
+        {
+            return repository.SubCategory(categoryId);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using MoneyApp.Models;
+using MoneyApp.Other;
 using System;
 using System.Collections.Generic;
 using System.Data;
