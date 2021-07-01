@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace MoneyApp.Models
 {
@@ -9,6 +10,6 @@ namespace MoneyApp.Models
         public string Name { get; set; }
         [Required]
         public TypeTransactionModel Type { get; set; }
-        public SubCategoryModel SubCategory { get; set; }
+        public IEnumerable<SubCategoryModel> SubCategory { get; set; }
     }
 }

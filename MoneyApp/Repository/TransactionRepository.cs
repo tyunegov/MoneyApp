@@ -45,24 +45,24 @@ namespace MoneyApp.Repository
            }
        }
 
-       public TM Get(int id)
+       public IEnumerable<TM> Get(int? id)
        {
            using (IDbConnection db = new SqlConnection(connectionString))
            {
-               var sql = $"SELECT TOP 1 * FROM Transactions t " +
-                    $"inner join Category ct on ct.Id = t.CategoryId " +
-                    $"inner join TypeTransaction tt on tt.Id = ct.TypeId " +
-                    $"WHERE t.Id = {id}"; 
+                var sql = $"SELECT {(id!=null? "TOP 1":"")} * FROM Transactions t " +
+                     $"inner join Category ct on ct.Id = t.CategoryId " +
+                     $"inner join TypeTransaction tt on tt.Id = ct.TypeId " +
+                     $"WHERE 1=1 " +
+                     $"{(id != null ? "AND t.Id = id" : "")}";
 
-               return db.Query<TM, CategoryModel, TypeTransactionModel, TM>(
-                   sql, 
-                   (t, ct, tt) =>
-                   {
-                       t.Category = ct;
-                       ct.Type = tt;
-                       return t;
-                   })
-                   .FirstOrDefault();
+                return db.Query<TM, CategoryModel, TypeTransactionModel, TM>(
+                    sql,
+                    (t, ct, tt) =>
+                    {
+                        t.Category = ct;
+                        ct.Type = tt;
+                        return t;
+                    });
            }
        }
 
@@ -92,7 +92,7 @@ namespace MoneyApp.Repository
                if(id==0)
                    return TransactionStatus.FailedToWriteTransaction;
                //Если все успешно, возвращаем 1, transaction меняется на тот, что в БД
-               transaction = Get(id);
+               transaction = Get(id).FirstOrDefault();
                return TransactionStatus.Success;
            }
        }
@@ -102,7 +102,7 @@ namespace MoneyApp.Repository
            using (IDbConnection db = new SqlConnection(connectionString))
            {
                //Проверяем наличие транзакции в БД
-               TM _transaction = Get(id);
+               TM _transaction = Get(id).FirstOrDefault();
                //При отсутствии возвращаем -1
                if (_transaction == null)
                {
@@ -115,7 +115,7 @@ namespace MoneyApp.Repository
                                    $"CategoryId = '{transaction.Category.Id}'," +
                                    $"Amount = '{transaction.Amount}', " +
                                    $"Description = '{(transaction.Description == null ? _transaction.Description : transaction.Description)}';)";
-               transaction = Get(id);
+               transaction = Get(id).FirstOrDefault();
                return TransactionStatus.Success;
            }
        }

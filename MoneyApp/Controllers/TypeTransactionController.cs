@@ -22,7 +22,6 @@ namespace MoneyApp.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("All")]
         public IEnumerable<TypeTransactionModel> GetAll()
         {
             return repository.GetAll();

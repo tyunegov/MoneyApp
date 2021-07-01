@@ -36,28 +36,17 @@ namespace MoneyApp.Controllers
         #endregion
 
         #region Get
-        /// <summary>
-        /// Получить все транзакции
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("History")]
-        public IEnumerable<TransactionModel> GetAll()
-        {
-            return repository.GetAll();
-        }
 
         /// <summary>
-        /// Получить транзакции по Id
+        /// Получить все транзакции или одну по id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("{id}")]
-        public IActionResult Get(int id)
+        public IActionResult Get(int? id)
         {
-            TransactionModel transaction = repository.Get(id);
-            if(transaction==null)
+            TransactionModel transaction = repository.Get(id).FirstOrDefault();
+            if(transaction==null && id==null)
                 return NotFound($"Transaction not found by id {id}");
             return Ok(transaction);
         }
@@ -69,8 +58,8 @@ namespace MoneyApp.Controllers
         /// <param name="endDate">Дата окончания отчетного периода</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("Report/Period")]
-        public IActionResult ReportPeriod([Required]DateTime startDate, DateTime? endDate)
+        [Route("History")]
+        public IActionResult History([Required]DateTime startDate, DateTime? endDate)
         {
            if (endDate == null) endDate = DateTime.Today;
            if (startDate > endDate) return BadRequest($"Дата начала отчетного периода не может быть больше даты окончания отчетного периода");
@@ -93,7 +82,7 @@ namespace MoneyApp.Controllers
         /// <param name="transaction"></param>
         /// <returns></returns>
         [HttpPut]
-        [Route("Put/{id}")]
+        [Route("{id}")]
         public IActionResult Put(int id, [FromBody] TransactionModel transaction)
         {
             TransactionStatus result = repository.Update(id, ref transaction);
@@ -108,10 +97,10 @@ namespace MoneyApp.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
-        [Route("Delete/{id}")]
+        [Route("{id}")]
         public IActionResult Delete(int id)
         {
-            TransactionModel transaction = repository.Get(id);
+            TransactionModel transaction = repository.Get(id).FirstOrDefault();
             if (transaction == null)
                 return NotFound($"Transaction not found by id {id}");
             repository.Delete(id);

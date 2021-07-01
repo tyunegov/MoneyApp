@@ -9,7 +9,7 @@ namespace MoneyApp.Repository
     {
         void Delete(int id);
         IEnumerable<T> GetAll();
-        T Get(int id);
+        IEnumerable<T> Get(int? id);
         TransactionStatus Insert(ref T transaction);
         TransactionStatus Update(int id, ref T transaction);
         IEnumerable<AGroupT> Period<AGroupT>(DateTime startDate, DateTime endDate) where AGroupT : AmountGroupTypeDTOModel;

@@ -36,20 +36,27 @@ namespace MoneyApp.Repository
             }
         }
 
-        public IEnumerable<Category> SubCategory(int categoryId)
+        public IEnumerable<Category> GetCategory(int? id, int? typeId)
         {
             using (IDbConnection db = new SqlConnection(connectionString))
             {
-                return db.Query<SubCategoryModel, TypeTransactionModel, Category, Category>(
-                    @$"SELECT * FROM dbo.Category c
-                    inner join TypeTransaction tt on tt.Id = c.TypeId
-                    inner join Category mc on mc.Id = c.CategoryId
-                    Where c.CategoryId ={categoryId}
-                    order by c.Name",
-                    (sc, tt, c) =>
+                string sql = @$"SELECT {(id!=null?"TOP 1":"")} * FROM dbo.Category c
+                    left join TypeTransaction tt on tt.Id = c.TypeId
+                    Where 1=1 
+                    {(id != null ? $"AND c.Id ={id} " : "AND c.CategoryId IS NULL")}
+                    {(typeId != null ? $"AND c.TypeId ={typeId} " : "")}
+                    order by c.Name";
+                return db.Query<Category, TypeTransactionModel, Category>(
+                    sql,
+                    (c, tt) =>
                     {
                         c.Type = tt;
-                        c.SubCategory = sc;
+                        using (IDbConnection db = new SqlConnection(connectionString))
+                        {
+                            c.SubCategory = db.Query<SubCategoryModel>(
+                                $@"SELECT * FROM dbo.Category c
+                                   Where c.CategoryId={c.Id}");
+                        }
                         return c;
                     }
                     );
