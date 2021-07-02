@@ -1,12 +1,10 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
+using MoneyAppDB.Repository;
 using System.Data;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace MoneyApp.Other.DbFactory
+namespace MoneyAppDb.Other.DbFactory
 {
     public class DbCategory: IDbCreator
     {

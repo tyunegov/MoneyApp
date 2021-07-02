@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MoneyApp.Models;
 using MoneyApp.Other;
+using MoneyApp.Other.State;
 using MoneyApp.Repository;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using System.ComponenTransactionModelodel.DataAnnotations;
 using System.Linq;
 
 namespace MoneyApp.Controllers
@@ -14,8 +15,11 @@ namespace MoneyApp.Controllers
     [ApiController]
     public class TransactionController : ControllerBase
     {
-        ITransactionRepository<TransactionModel> repository;
-        public TransactionController(ITransactionRepository<TransactionModel> repository)
+        private AbstractState<R, TransactionModel> state;
+        public AbstractState<R, TransactionModel> State { private get; set; }
+
+        ITransactionRepository<IActionResult, TransactionModel> repository;
+        public TransactionController(ITransactionRepository<IActionResult, TransactionModel> repository)
         {
             this.repository = repository;
         }
@@ -27,11 +31,15 @@ namespace MoneyApp.Controllers
         /// <returns></returns>
         [HttpPost]
         public IActionResult Post([FromBody]TransactionModel transaction)
-        {
-                TransactionStatus result = repository.Insert(ref transaction);
-                if (result == TransactionStatus.NotFound) return NotFound($"Category not found by id {transaction.Category.Id}");
-                if (result == TransactionStatus.FailedToWriteTransaction) return BadRequest($"Failed to write transaction");
+        {   
+                return repository.Insert(ref transaction);
+
+                if (result == TransactionStatus.NotFound) return base.NotFound($"{Other.StatusCode.CATEGORY_NOT_FOUND}: {transaction.Category.Id}");
+                if (result == TransactionStatus.FailedToWriteTransaction) return base.BadRequest(Other.StatusCode.FAILED_TO_WRITE_TRANSACTION);
                 return Created("", transaction);
+
+            return new Realize<IActionResult, TransactionModel>().State();
+            throw new NotImplementedException();
         }
         #endregion
 
@@ -64,8 +72,8 @@ namespace MoneyApp.Controllers
            if (endDate == null) endDate = DateTime.Today;
            if (startDate > endDate) return BadRequest($"Дата начала отчетного периода не может быть больше даты окончания отчетного периода");
             IEnumerable<AmountGroupTypeDTOModel> aGroupT = repository.Period<AmountGroupTypeDTOModel>(startDate, endDate.Value);
-           if(aGroupT==null || aGroupT.Count()==0) return BadRequest("За данный период не найдено транзакций");
-            ReportPeriodDTOModel dto = new ReportPeriodDTOModel()
+           if(aGroupT==null || aGroupT.Count()==0) return NotFound("За данный период не найдено транзакций");
+            History dto = new History()
             {
                 StartDate = startDate,
                 EndDate = endDate.Value,

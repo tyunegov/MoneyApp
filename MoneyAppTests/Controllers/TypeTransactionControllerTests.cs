@@ -22,7 +22,7 @@ namespace MoneyAppAPITests.Controllers
             restClient = RestClientSingleton.RestClient;
         }
         #region GetAll
-        [TestMethod()]
+        [TesTransactionModelethod()]
         public void GetAllShouldStatusOk()
         {
             //Act
@@ -31,7 +31,7 @@ namespace MoneyAppAPITests.Controllers
             Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
         }
 
-        [TestMethod()]
+        [TesTransactionModelethod()]
         public void GetAllReturnListTypeTransactionModel()
         {
             //Act
@@ -42,7 +42,7 @@ namespace MoneyAppAPITests.Controllers
             Assert.IsTrue(locationResponse is IEnumerable<TypeTransactionModel>, "IEnumerable<TypeTransactionModel>");
         }
 
-        [TestMethod()]
+        [TesTransactionModelethod()]
         public void GetAllCount()
         {
             //Act

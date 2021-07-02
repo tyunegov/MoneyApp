@@ -1,15 +1,12 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using MoneyApp.Models;
-using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace MoneyApp.Repository
+namespace MoneyAppDb.Repository
 {
-    public class CategoryRepository<Category>: ICategoryRepository<Category> where Category : CategoryModel
+    public class CategoryRepository: ICategoryRepository
     {
         private string connectionString;
 
@@ -18,11 +15,11 @@ namespace MoneyApp.Repository
             this.connectionString = connectionString;
         }
 
-        public IEnumerable<Category> MainCategory(int typeId)
+        public IEnumerable<CategoryModel> MainCategory(int typeId)
         {
             using (IDbConnection db = new SqlConnection(connectionString))
             {                
-                return db.Query<Category, TypeTransactionModel, Category>(
+                return db.Query<CategoryModel, TypeTransactionModel, CategoryModel>(
                     @$"SELECT * FROM dbo.Category c
                     inner join TypeTransaction tt on tt.Id = c.TypeId
                     Where c.typeId ={typeId} AND c.CategoryId IS NULL
@@ -36,7 +33,7 @@ namespace MoneyApp.Repository
             }
         }
 
-        public IEnumerable<Category> GetCategory(int? id, int? typeId)
+        public IEnumerable<CategoryModel> GetCategory(int? id, int? typeId)
         {
             using (IDbConnection db = new SqlConnection(connectionString))
             {
@@ -46,7 +43,7 @@ namespace MoneyApp.Repository
                     {(id != null ? $"AND c.Id ={id} " : "AND c.CategoryId IS NULL")}
                     {(typeId != null ? $"AND c.TypeId ={typeId} " : "")}
                     order by c.Name";
-                return db.Query<Category, TypeTransactionModel, Category>(
+                return db.Query<CategoryModel, TypeTransactionModel, CategoryModel>(
                     sql,
                     (c, tt) =>
                     {

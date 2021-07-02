@@ -1,53 +1,29 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using MoneyApp.Models;
-using MoneyApp.Other;
+using MoneyAppDb.Models;
+using MoneyAppDB.Repository;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
-namespace MoneyApp.Repository
+namespace MoneyAppDb.Repository
 {
-    public class TransactionRepository<TM> : ITransactionRepository<TM> where TM : TransactionModel
-    {
-        private string connectionString;
-
-        public TransactionRepository(string connectionString)
-        {
-            this.connectionString = connectionString;
-        }
-
-        public IEnumerable<TM> GetAll()
-        {
-            using (IDbConnection db = new SqlConnection(connectionString))
-            {
-                return db.Query<TM, CategoryModel, TypeTransactionModel, TM>(
-                    @"SELECT * FROM dbo.Transactions t
-                    inner join Category ct on ct.Id = t.CategoryId
-                    inner join TypeTransaction tt on tt.Id = ct.TypeId
-                    order by t.Date desc",
-                    (t, ct, tt) =>
-                    {
-                        ct.Type = tt;
-                        t.Category = ct;
-                        return t;
-                    }
-                    );
-            }
-        }
+    public class TransactionRepository : ITransactionRepository { 
+        private string ConnectionString {get { return DB.CONNECTION_STRING; } }       
         
        public void Delete(int id)
        {
-           using (IDbConnection db = new SqlConnection(connectionString))
+           using (IDbConnection db = new SqlConnection(ConnectionString))
            {
                db.Execute($"DELETE FROM Transactions WHERE Id = {id}");
            }
        }
 
-       public IEnumerable<TM> Get(int? id)
+       public IEnumerable<TransactionModel> Get(int? id)
        {
-           using (IDbConnection db = new SqlConnection(connectionString))
+           using (IDbConnection db = new SqlConnection(ConnectionString))
            {
                 var sql = $"SELECT {(id!=null? "TOP 1":"")} * FROM Transactions t " +
                      $"inner join Category ct on ct.Id = t.CategoryId " +
@@ -55,7 +31,7 @@ namespace MoneyApp.Repository
                      $"WHERE 1=1 " +
                      $"{(id != null ? "AND t.Id = id" : "")}";
 
-                return db.Query<TM, CategoryModel, TypeTransactionModel, TM>(
+                return db.Query<TransactionModel, CategoryModel, TypeTransactionModel, TransactionModel>(
                     sql,
                     (t, ct, tt) =>
                     {
@@ -66,17 +42,20 @@ namespace MoneyApp.Repository
            }
        }
 
-       public TransactionStatus Insert(ref TM transaction)
+       public void Insert(ref TransactionModel transaction)
        {
-           using (IDbConnection db = new SqlConnection(connectionString))
+           using (IDbConnection db = new SqlConnection(ConnectionString))
            {
+                //вынести все проверки в контроллер
+                throw new NotImplementedException();
+
                //Проверяем наличие TypeId в БД
                string sql = $"SELECT TOP 1 Id FROM Category Where Id = '{transaction.Category.Id}'";
                int categoryId = db.Query<int>(sql).FirstOrDefault();
                //При отсутствии возвращаем NotFound
                if (categoryId == 0)
                {
-                   return TransactionStatus.NotFound;
+                   return State.NotFound();
                }
                //Пробуем сделать запись транзакции
                var sqlQuery = $"DECLARE @ID int;" +
@@ -97,12 +76,16 @@ namespace MoneyApp.Repository
            }
        }
 
-       public TransactionStatus Update(int id, ref TM transaction)
+       public void Update(int id, ref TransactionModel transaction)
        {
-           using (IDbConnection db = new SqlConnection(connectionString))
+
+            //вынести все проверки в контроллер
+            throw new NotImplementedException();
+
+            using (IDbConnection db = new SqlConnection(ConnectionString))
            {
                //Проверяем наличие транзакции в БД
-               TM _transaction = Get(id).FirstOrDefault();
+               TransactionModel _transaction = Get(id).FirstOrDefault();
                //При отсутствии возвращаем -1
                if (_transaction == null)
                {
@@ -122,7 +105,7 @@ namespace MoneyApp.Repository
 
        public IEnumerable<AGroupT> Period<AGroupT>(DateTime startDate, DateTime endDate) where AGroupT : AmountGroupTypeDTOModel
        {
-           using (IDbConnection db = new SqlConnection(connectionString))
+           using (IDbConnection db = new SqlConnection(ConnectionString))
            {
                string sql = @"SELECT ct.TypeId, SUM(t.Amount) as Amount, tt.Id, tt.Name 
                    FROM [MoneyApp].[dbo].[Transactions] t

@@ -31,7 +31,7 @@ namespace MoneyApp.Repository.Tests
             };
 
         #region GetAll
-        [TestMethod()]
+        [TesTransactionModelethod()]
         public void GetAllTest()
         {
             // Arrange
@@ -47,7 +47,7 @@ namespace MoneyApp.Repository.Tests
         }
         #endregion
         #region Get(id)
-        [TestMethod()]
+        [TesTransactionModelethod()]
         public void Get1ShouldOk()
         {
             // Arrange
@@ -62,7 +62,7 @@ namespace MoneyApp.Repository.Tests
             Assert.IsTrue(result is OkObjectResult, "Статус код ОК");
         }
 
-        [TestMethod()]
+        [TesTransactionModelethod()]
         public void Get0ShouldNotFound()
         {
             // Arrange
@@ -78,7 +78,7 @@ namespace MoneyApp.Repository.Tests
         }
         #endregion
         #region Report/TimePeriod
-        [TestMethod()]
+        [TesTransactionModelethod()]
         public void ReportPeriodResultOk()
         {
             var startDate = new DateTime();
@@ -94,7 +94,7 @@ namespace MoneyApp.Repository.Tests
             mock.Verify(r => r.Period<AmountGroupTypeDTOModel>(startDate,endDate), Times.Once, "Не был вызван метод repository.Period<AmountGroupTypeDTOModel>()");
             Assert.IsTrue(result is OkObjectResult, "Статус код ОК");
         }
-        [TestMethod()]
+        [TesTransactionModelethod()]
         public void ReportPeriodExpectedCountAgroupT()
         {
             var startDate = new DateTime();
@@ -107,10 +107,10 @@ namespace MoneyApp.Repository.Tests
             // Act
             var result = controller.ReportPeriod(startDate, endDate);
             // Assert
-            Assert.AreEqual(MoqAGroupT.Count(), ((result as OkObjectResult).Value as ReportPeriodDTOModel).AmountGroupType.Count(), "Не соответствует количество элементов");
+            Assert.AreEqual(MoqAGroupT.Count(), ((result as OkObjectResult).Value as History).AmountGroupType.Count(), "Не соответствует количество элементов");
         }
 
-        [TestMethod()]
+        [TesTransactionModelethod()]
         public void ReportPeriodResultBadRequest()
         {
             var startDate = DateTime.Now;
@@ -130,7 +130,7 @@ namespace MoneyApp.Repository.Tests
         /// <summary>
         /// Удаление происходит, объект имеется в БД
         /// </summary>
-        [TestMethod()]
+        [TesTransactionModelethod()]
         public void Delete1ShouldOk()
         {
             // Arrange
@@ -148,7 +148,7 @@ namespace MoneyApp.Repository.Tests
         /// <summary>
         /// При успешном удалении в статусе удаленный объект
         /// </summary>
-        [TestMethod()]
+        [TesTransactionModelethod()]
         public void Delete1ReturnTransaction1()
         {
             // Arrange
@@ -165,7 +165,7 @@ namespace MoneyApp.Repository.Tests
         /// <summary>
         /// Объект в БД не найден, возвращается статус 404
         /// </summary>
-        [TestMethod()]
+        [TesTransactionModelethod()]
         public void Delete0ShouldNotFound()
         {
             // Arrange
@@ -181,7 +181,7 @@ namespace MoneyApp.Repository.Tests
         }
         #endregion
         #region Post
-        [TestMethod()]
+        [TesTransactionModelethod()]
         public void Post0ShouldCreated()
         {
             // Arrange
@@ -195,7 +195,7 @@ namespace MoneyApp.Repository.Tests
             Assert.IsTrue(result is CreatedResult, "Created result");
         }
 
-        [TestMethod()]
+        [TesTransactionModelethod()]
         public void Post0ShouldNotFound()
         {
             // Arrange
@@ -210,7 +210,7 @@ namespace MoneyApp.Repository.Tests
             Assert.AreEqual(((NotFoundObjectResult)result).Value, $"Category not found by id {model.Category.Id}", "CategoryNotFound");
         }
 
-        [TestMethod()]
+        [TesTransactionModelethod()]
         public void Post0ShouldBadRequest()
         {
             // Arrange
@@ -227,7 +227,7 @@ namespace MoneyApp.Repository.Tests
         #endregion
 
         #region PUT
-        [TestMethod()]
+        [TesTransactionModelethod()]
         public void Put0ShouldNotFound()
         {
             // Arrange

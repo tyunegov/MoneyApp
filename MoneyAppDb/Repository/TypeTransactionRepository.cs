@@ -1,14 +1,11 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using MoneyApp.Models;
-using MoneyApp.Other;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace MoneyApp.Repository
+namespace MoneyAppDb.Repository
 {
     public class TypeTransactionRepository: ITypeTransactionRepository
     {

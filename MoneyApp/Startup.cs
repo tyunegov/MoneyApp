@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -31,7 +32,9 @@ namespace MoneyApp
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
-            services.AddTransient<ITransactionRepository<TransactionModel>, TransactionRepository<TransactionModel>>(provider => new TransactionRepository<TransactionModel>(DB.CONNECTION_STRING));
+            services.AddTransient<ITransactionRepository<IActionResult, TransactionModel>, 
+                        TransactionRepository<IActionResult, TransactionModel>>
+                        (provider => new TransactionRepository<IActionResult, TransactionModel>(DB.CONNECTION_STRING));
             services.AddTransient<ITypeTransactionRepository, TypeTransactionRepository>(provider => new TypeTransactionRepository(DB.CONNECTION_STRING));
             services.AddTransient<ICategoryRepository<CategoryModel>, CategoryRepository<CategoryModel>>(provider => new CategoryRepository<CategoryModel>(DB.CONNECTION_STRING));
             services.AddControllersWithViews();
