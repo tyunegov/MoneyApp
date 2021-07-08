@@ -1,13 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MoneyApp.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace MoneyApp.Other.State
 {
-    public class CategoryState<R,T>:AbstractState<R, T>
+    public class CategoryState: ControllerBase
     {
+        public override NotFoundObjectResult NotFound([ActionResultObjectValue] object value)
+        {
+            return base.NotFound(new ErrorState() 
+            {
+                Error = Other.StatusCode.CATEGORY_NOT_FOUND,
+                Value = value
+            });
+        }
     }
 }

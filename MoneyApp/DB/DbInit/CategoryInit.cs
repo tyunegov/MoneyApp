@@ -1,30 +1,29 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using MoneyAppDB.Repository;
+using MoneyApp.Repository;
 using System.Data;
 using System.Linq;
 
 namespace MoneyAppDb.Other.DbFactory
 {
-    public class DbCategory: IDbCreator
+    public class CategoryInit: IDbInit
     {
         public static void CreateDbIfNotExist()
         {
-            using (IDbConnection db = new SqlConnection(DB.CONNECTION_STRING))
+            using (IDbConnection db = new SqlConnection(DBHelper.CONNECTION_STRING))
             {
-                var v = db.Query<int?>($"SELECT OBJECT_ID (N'{DB.CATEGORY}', N'U')").FirstOrDefault();
+                var v = db.Query<int?>($"SELECT OBJECT_ID (N'{DBHelper.CATEGORY}', N'U')").FirstOrDefault();
                 if (v == null)
                 {
                     //Создаем таблицу
-                    db.Query($@"CREATE TABLE {DB.CATEGORY}(
+                    db.Query($@"CREATE TABLE {DBHelper.CATEGORY}(
 	                        [Id] [int] IDENTITY(1,1) NOT NULL,
                             [Name] [varchar](max) NULL,
-                            [TypeId] [int] NULL,
 	                        [CategoryId] [int] NULL
                         ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]"
                         );
                     //Заполняем категории
-                    db.Query($@"INSERT INTO {DB.CATEGORY}
+                    db.Query($@"INSERT INTO {DBHelper.CATEGORY}
                                ([Name]
                                ,[TypeId]
                                ,[CategoryId])

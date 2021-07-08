@@ -1,8 +1,8 @@
 ﻿using MoneyAppDb.Other.DbFactory;
 
-namespace MoneyAppDB.Repository
+namespace MoneyApp.Repository
 {
-    internal static class DB
+    internal static class DBHelper
     {
         internal static readonly string CONNECTION_STRING = @"Data Source=DESCKTOP\SQLEXPRESS;Initial Catalog=MoneyApp;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
@@ -12,9 +12,9 @@ namespace MoneyAppDB.Repository
 
         internal static void FirstInitDB()
         {
-            DbTypeTransaction.CreateDbIfNotExist();
-            DbCategory.CreateDbIfNotExist();
-            DbTransaction.CreateDbIfNotExist();
+            TypeTransactionInit.CreateDbIfNotExist();
+            CategoryInit.CreateDbIfNotExist();
+            TransactionInit.CreateDbIfNotExist();
         }
     }
 }

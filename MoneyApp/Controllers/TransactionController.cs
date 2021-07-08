@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MoneyApp.Db.Repository;
+using MoneyApp.DB.Interface.Repository;
+using MoneyApp.Interface.Repository;
 using MoneyApp.Models;
-using MoneyApp.Other;
 using MoneyApp.Other.State;
-using MoneyApp.Repository;
 using System;
 using System.Collections.Generic;
-using System.ComponenTransactionModelodel.DataAnnotations;
 using System.Linq;
 
 namespace MoneyApp.Controllers
@@ -13,16 +13,9 @@ namespace MoneyApp.Controllers
     [Produces("application/json")]
     [Route("[controller]")]
     [ApiController]
-    public class TransactionController : ControllerBase
+    public class TransactionController : MoneyAppControllerBase
     {
-        private AbstractState<R, TransactionModel> state;
-        public AbstractState<R, TransactionModel> State { private get; set; }
 
-        ITransactionRepository<IActionResult, TransactionModel> repository;
-        public TransactionController(ITransactionRepository<IActionResult, TransactionModel> repository)
-        {
-            this.repository = repository;
-        }
         #region Post
         /// <summary>
         /// Добавление транзакции
@@ -31,15 +24,13 @@ namespace MoneyApp.Controllers
         /// <returns></returns>
         [HttpPost]
         public IActionResult Post([FromBody]TransactionModel transaction)
-        {   
-                return repository.Insert(ref transaction);
+        {                        
+            CategoryModel category = base.CategoryRepository.Get(transaction.Category.Id).FirstOrDefault();
+                if (category == null) return base.CategoryState.NotFound("categoryId: "+transaction.Category.Id);
+            TransactionModel result = base.TransactionRepository.Insert(transaction);
+                if (result == null) return base.TransactionState.FailedToWrite(transaction);
 
-                if (result == TransactionStatus.NotFound) return base.NotFound($"{Other.StatusCode.CATEGORY_NOT_FOUND}: {transaction.Category.Id}");
-                if (result == TransactionStatus.FailedToWriteTransaction) return base.BadRequest(Other.StatusCode.FAILED_TO_WRITE_TRANSACTION);
-                return Created("", transaction);
-
-            return new Realize<IActionResult, TransactionModel>().State();
-            throw new NotImplementedException();
+            return base.TransactionState.Created("", result);
         }
         #endregion
 
@@ -53,10 +44,9 @@ namespace MoneyApp.Controllers
         [HttpGet]
         public IActionResult Get(int? id)
         {
-            TransactionModel transaction = repository.Get(id).FirstOrDefault();
-            if(transaction==null && id==null)
-                return NotFound($"Transaction not found by id {id}");
-            return Ok(transaction);
+            IEnumerable<TransactionModel> model = base.TransactionRepository.Get(id);
+                if (id != null && model.FirstOrDefault() == null) return base.TransactionState.NotFound($"id: {id}");
+            return base.TransactionState.Ok(model);
         }
 
         /// <summary>
@@ -67,19 +57,13 @@ namespace MoneyApp.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("History")]
-        public IActionResult History([Required]DateTime startDate, DateTime? endDate)
+        public IActionResult History(DateTime? startDate, DateTime? endDate)
         {
-           if (endDate == null) endDate = DateTime.Today;
-           if (startDate > endDate) return BadRequest($"Дата начала отчетного периода не может быть больше даты окончания отчетного периода");
-            IEnumerable<AmountGroupTypeDTOModel> aGroupT = repository.Period<AmountGroupTypeDTOModel>(startDate, endDate.Value);
-           if(aGroupT==null || aGroupT.Count()==0) return NotFound("За данный период не найдено транзакций");
-            History dto = new History()
-            {
-                StartDate = startDate,
-                EndDate = endDate.Value,
-                AmountGroupType = aGroupT
-            };
-            return Ok(dto);
+            if (startDate > endDate) return base.TransactionState.WrongFilterDates();
+            if (startDate == null) startDate = new DateTime();
+            if (endDate == null) endDate = DateTime.Today;
+            IEnumerable<AmountGroupTypeDTOModel> model = base.TransactionRepository.Period(startDate.Value, endDate.Value);
+            return base.TransactionState.Ok(model);
         }
         #endregion
         #region PUT
@@ -93,9 +77,14 @@ namespace MoneyApp.Controllers
         [Route("{id}")]
         public IActionResult Put(int id, [FromBody] TransactionModel transaction)
         {
-            TransactionStatus result = repository.Update(id, ref transaction);
-            if (result == TransactionStatus.NotFound) return NotFound($"Transaction not found by id {transaction.Category.Id}");
-            return Created("", transaction);
+            TransactionModel _transaction = base.TransactionRepository.Get(id).FirstOrDefault();
+                if(_transaction==null) return base.TransactionState.NotFound($"id: {transaction.Id}");
+
+            CategoryModel category = base.CategoryRepository.Get(transaction.Category.Id).FirstOrDefault();
+                if (category == null) return base.CategoryState.NotFound($"id: {transaction.Id}");
+
+            TransactionModel result = base.TransactionRepository.Update(id, ref transaction);
+            return base.TransactionState.Created("", transaction);
         }
         #endregion
         #region Delete
@@ -108,11 +97,11 @@ namespace MoneyApp.Controllers
         [Route("{id}")]
         public IActionResult Delete(int id)
         {
-            TransactionModel transaction = repository.Get(id).FirstOrDefault();
-            if (transaction == null)
-                return NotFound($"Transaction not found by id {id}");
-            repository.Delete(id);
-            return Ok(transaction);
+            TransactionModel _transaction = base.TransactionRepository.Get(id).FirstOrDefault();
+            if (_transaction == null) return base.TransactionState.NotFound($"id: {id}");
+
+            if(!base.TransactionRepository.Delete(id)) return base.TransactionState.BadRequest();
+            return base.TransactionState.Ok();
         }
         #endregion
     }

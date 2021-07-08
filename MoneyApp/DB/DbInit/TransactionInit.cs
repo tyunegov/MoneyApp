@@ -1,26 +1,24 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using MoneyAppDB.Repository;
+using MoneyApp.Repository;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace MoneyAppDb.Other.DbFactory
 {
-    public class DbTransaction: IDbCreator
+    public class TransactionInit: IDbInit
     {
-        public static new void CreateDbIfNotExist()
+        public static void CreateDbIfNotExist()
         {
-            using (IDbConnection db = new SqlConnection(DB.CONNECTION_STRING))
+            using (IDbConnection db = new SqlConnection(DBHelper.CONNECTION_STRING))
             {
-                var v = db.Query<int?>($"SELECT OBJECT_ID (N'{DB.TYPE_TRANSACTION}', N'U')").FirstOrDefault();
+                var v = db.Query<int?>($"SELECT OBJECT_ID (N'{DBHelper.TYPE_TRANSACTION}', N'U')").FirstOrDefault();
                 if (v == null)
                 {
                     throw new NotImplementedException();
                     //Создаем таблицу
-                    db.Query($@"CREATE TABLE {DB.TYPE_TRANSACTION}(
+                    db.Query($@"CREATE TABLE {DBHelper.TYPE_TRANSACTION}(
 	                        		[Id] [int] IDENTITY(1,1) NOT NULL,
 	                                [Date] [date] NULL,
 	                                [CategoryId] [int] NULL,
@@ -29,7 +27,7 @@ namespace MoneyAppDb.Other.DbFactory
                                 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]"
                         );
                     //Заполняем категории
-                    db.Query($@"INSERT INTO {DB.TYPE_TRANSACTION}
+                    db.Query($@"INSERT INTO {DBHelper.TYPE_TRANSACTION}
                                ([Date]
                                ,[CategoryId]
                                ,[Amount]

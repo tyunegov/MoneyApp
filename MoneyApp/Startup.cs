@@ -5,8 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MoneyApp.Models;
-using MoneyApp.Other;
-using MoneyApp.Repository;
 using System;
 using System.IO;
 using System.Reflection;
@@ -32,11 +30,6 @@ namespace MoneyApp
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
-            services.AddTransient<ITransactionRepository<IActionResult, TransactionModel>, 
-                        TransactionRepository<IActionResult, TransactionModel>>
-                        (provider => new TransactionRepository<IActionResult, TransactionModel>(DB.CONNECTION_STRING));
-            services.AddTransient<ITypeTransactionRepository, TypeTransactionRepository>(provider => new TypeTransactionRepository(DB.CONNECTION_STRING));
-            services.AddTransient<ICategoryRepository<CategoryModel>, CategoryRepository<CategoryModel>>(provider => new CategoryRepository<CategoryModel>(DB.CONNECTION_STRING));
             services.AddControllersWithViews();
         }
 

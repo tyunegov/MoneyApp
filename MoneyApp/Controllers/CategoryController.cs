@@ -1,32 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MoneyApp.Db.Repository;
+using MoneyApp.Interface.Repository;
 using MoneyApp.Models;
-using MoneyApp.Repository;
-using System;
+using MoneyApp.Other.State;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace MoneyApp.Controllers
 {
     [Produces("application/json")]
     [Route("[controller]")]
     [ApiController]
-    public class CategoryController : Controller
+    public class CategoryController : MoneyAppControllerBase
     {
-        ICategoryRepository<CategoryModel> repository;
-        public CategoryController(ICategoryRepository<CategoryModel> repository)
-        {
-            this.repository = repository;
-        }
-
         /// <summary>
         /// Получить категории по id или typeId
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public IEnumerable<CategoryModel> Get(int? id, int? typeId)
+        public IActionResult Get(int? id, int? typeId)
         {
-            return repository.GetCategory(id, typeId);
+            IEnumerable<CategoryModel> model = base.CategoryRepository.Get(id, typeId);
+                if (id != null && model.FirstOrDefault() == null) return base.CategoryState.NotFound($"id: {id}");
+            return base.CategoryState.Ok(model);
         }
     }
 }

@@ -1,20 +1,18 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
+using MoneyApp.DB.Interface.Repository;
 using MoneyApp.Models;
+using MoneyApp.Repository;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
-namespace MoneyAppDb.Repository
+namespace MoneyApp.Db.Repository
 {
     public class TypeTransactionRepository: ITypeTransactionRepository
     {
-        private string connectionString;
+        private string connectionString = DBHelper.CONNECTION_STRING;
 
-        public TypeTransactionRepository(string connectionString)
-        {
-            this.connectionString = connectionString;
-        }
         public IEnumerable<TypeTransactionModel> GetAll()
         {
             using (IDbConnection db = new SqlConnection(connectionString))

@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MoneyApp.Db.Repository;
+using MoneyApp.DB;
 using MoneyApp.Models;
-using MoneyApp.Repository;
-using System;
+using MoneyApp.Other.State;
 using System.Collections.Generic;
 
 namespace MoneyApp.Controllers
@@ -11,20 +12,18 @@ namespace MoneyApp.Controllers
     [ApiController]
     public class TypeTransactionController : ControllerBase
     {
-        ITypeTransactionRepository repository;
-        public TypeTransactionController(ITypeTransactionRepository repository)
-        {
-            this.repository = repository;
-        }
+        TypeTransactionRepository repo = new TypeTransactionRepository();
+        ControllerBase state = new TypeTransactionState();
         #region Get
         /// <summary>
         /// Получить все типы транзакций
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public IEnumerable<TypeTransactionModel> GetAll()
+        public IActionResult Get()
         {
-            return repository.GetAll();
+            IEnumerable<TypeTransactionModel> model = repo.GetAll();            
+            return state.Ok(model);
         }
         #endregion
     }

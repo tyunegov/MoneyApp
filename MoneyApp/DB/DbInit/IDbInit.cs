@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MoneyAppDb.Other.DbFactory
 {
-    public abstract class IDbCreator
+    public interface IDbInit
     {
         public static void CreateDbIfNotExist() { }
     }

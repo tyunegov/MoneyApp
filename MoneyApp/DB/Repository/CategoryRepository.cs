@@ -1,43 +1,27 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
+using MoneyApp.Interface.Repository;
 using MoneyApp.Models;
+using MoneyApp.Repository;
 using System.Collections.Generic;
 using System.Data;
 
-namespace MoneyAppDb.Repository
+namespace MoneyApp.Db.Repository
 {
-    public class CategoryRepository: ICategoryRepository
+    public class CategoryRepository : ICategoryRepository
     {
         private string connectionString;
 
-        public CategoryRepository(string connectionString)
+        public CategoryRepository ()
         {
-            this.connectionString = connectionString;
+            this.connectionString = DBHelper.CONNECTION_STRING;
         }
 
-        public IEnumerable<CategoryModel> MainCategory(int typeId)
-        {
-            using (IDbConnection db = new SqlConnection(connectionString))
-            {                
-                return db.Query<CategoryModel, TypeTransactionModel, CategoryModel>(
-                    @$"SELECT * FROM dbo.Category c
-                    inner join TypeTransaction tt on tt.Id = c.TypeId
-                    Where c.typeId ={typeId} AND c.CategoryId IS NULL
-                    order by c.Name",
-                    (c, tt) =>
-                    {
-                        c.Type = tt;
-                        return c;
-                    }
-                    );
-            }
-        }
-
-        public IEnumerable<CategoryModel> GetCategory(int? id, int? typeId)
+        public IEnumerable<CategoryModel> Get(int? id=null, int? typeId=null)
         {
             using (IDbConnection db = new SqlConnection(connectionString))
             {
-                string sql = @$"SELECT {(id!=null?"TOP 1":"")} * FROM dbo.Category c
+                string sql = @$"SELECT {(id != null ? "TOP 1" : "")} * FROM dbo.Category c
                     left join TypeTransaction tt on tt.Id = c.TypeId
                     Where 1=1 
                     {(id != null ? $"AND c.Id ={id} " : "AND c.CategoryId IS NULL")}
