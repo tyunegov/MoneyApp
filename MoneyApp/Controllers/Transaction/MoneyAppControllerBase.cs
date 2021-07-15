@@ -1,13 +1,8 @@
-﻿using MoneyApp.Db.Repository;
-using MoneyApp.DB.Interface.Repository;
-using MoneyApp.Interface.Repository;
+﻿using MoneyApp.Db.Repository.Transaction;
+using MoneyApp.Interface.Repository.Transaction;
 using MoneyApp.Other.State;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace MoneyApp.Controllers
+namespace MoneyApp.Controllers.Transaction
 {
     public abstract class MoneyAppControllerBase
     {

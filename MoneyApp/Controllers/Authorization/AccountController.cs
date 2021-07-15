@@ -6,11 +6,9 @@ using MoneyApp.Models.User;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
-namespace MoneyApp.Authorization
+namespace MoneyApp.Controllers.Authorization
 {
     [ApiController]
     [Route("[controller]")]
@@ -28,14 +26,13 @@ namespace MoneyApp.Authorization
             }
 
             var now = DateTime.UtcNow;
-            // создаем JWT-токен
             var jwt = new JwtSecurityToken(
-                    issuer: AuthOptions.ISSUER,
-                    audience: AuthOptions.AUDIENCE,
+                    issuer: AuthorizationStartup.ISSUER,
+                    audience: AuthorizationStartup.AUDIENCE,
                     notBefore: now,
                     claims: identity.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+                    expires: now.Add(TimeSpan.FromMinutes(AuthorizationStartup.LIFETIME)),
+                    signingCredentials: new SigningCredentials(AuthorizationStartup.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
             var response = new
@@ -46,7 +43,15 @@ namespace MoneyApp.Authorization
 
             return Json(response);
         }
-                
+
+        [HttpGet]
+        public IActionResult GetLogin()
+        {
+            var user = repository.GetUser(User.Identity.Name);
+            user.Password = null;
+            return Ok(user);
+        }
+
         private ClaimsIdentity GetIdentity(string login, string password)
         {
             UserModel person = repository.GetUser(login, password);

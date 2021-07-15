@@ -3,11 +3,8 @@ using Microsoft.Data.SqlClient;
 using MoneyApp.DB.Interface.Repository.Authorization;
 using MoneyApp.Models.User;
 using MoneyApp.Repository;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace MoneyApp.DB.Repository.Authorization
 {

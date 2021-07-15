@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MoneyApp.Authorization
+namespace MoneyApp
 {
-    public class AuthOptions
+    public class AuthorizationStartup
     {
         public const string ISSUER = "MoneyApp"; // издатель токена
         public const string AUDIENCE = "MoneyAppAudience"; // потребитель токена
@@ -30,17 +30,17 @@ namespace MoneyApp.Authorization
                 // укзывает, будет ли валидироваться издатель при валидации токена
                 ValidateIssuer = true,
                 // строка, представляющая издателя
-                ValidIssuer = AuthOptions.ISSUER,
+                ValidIssuer = AuthorizationStartup.ISSUER,
 
                 // будет ли валидироваться потребитель токена
                 ValidateAudience = true,
                 // установка потребителя токена
-                ValidAudience = AuthOptions.AUDIENCE,
+                ValidAudience = AuthorizationStartup.AUDIENCE,
                 // будет ли валидироваться время существования
                 ValidateLifetime = true,
 
                 // установка ключа безопасности
-                IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+                IssuerSigningKey = AuthorizationStartup.GetSymmetricSecurityKey(),
                 // валидация ключа безопасности
                 ValidateIssuerSigningKey = true,
             };

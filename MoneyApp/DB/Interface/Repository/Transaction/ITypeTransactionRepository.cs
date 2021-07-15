@@ -1,7 +1,7 @@
 ﻿using MoneyApp.Models;
 using System.Collections.Generic;
 
-namespace MoneyApp.DB.Interface.Repository
+namespace MoneyApp.Interface.Repository.Transaction
 {
     public interface ITypeTransactionRepository
     {

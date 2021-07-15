@@ -1,12 +1,12 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using MoneyApp.Interface.Repository;
+using MoneyApp.Interface.Repository.Transaction;
 using MoneyApp.Models;
 using MoneyApp.Repository;
 using System.Collections.Generic;
 using System.Data;
 
-namespace MoneyApp.Db.Repository
+namespace MoneyApp.Db.Repository.Transaction
 {
     public class CategoryRepository : ICategoryRepository
     {

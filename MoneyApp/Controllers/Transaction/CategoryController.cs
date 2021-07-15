@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MoneyApp.Db.Repository;
-using MoneyApp.Interface.Repository;
 using MoneyApp.Models;
-using MoneyApp.Other.State;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MoneyApp.Controllers
+namespace MoneyApp.Controllers.Transaction
 {
     [Produces("application/json")]
     [Route("[controller]")]
