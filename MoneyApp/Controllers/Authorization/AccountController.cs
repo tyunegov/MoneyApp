@@ -3,6 +3,8 @@ using Microsoft.IdentityModel.Tokens;
 using MoneyApp.DB.Interface.Repository.Authorization;
 using MoneyApp.DB.Repository.Authorization;
 using MoneyApp.Models.User;
+using MoneyApp.Other.State;
+using MoneyApp.Other.State.Authorization;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -15,6 +17,7 @@ namespace MoneyApp.Controllers.Authorization
     public class AccountController : Controller
     {
         IUserRepository repository = new UserRepository();
+        AccountState state = new AccountState();
 
         [HttpPost("/Token")]
         public IActionResult Token(string username, string password)
@@ -45,11 +48,18 @@ namespace MoneyApp.Controllers.Authorization
         }
 
         [HttpGet]
-        public IActionResult GetLogin()
+        public IActionResult Get()
         {
             var user = repository.GetUser(User.Identity.Name);
             user.Password = null;
             return Ok(user);
+        }
+
+        [HttpPost]
+        public IActionResult Post([FromBody] UserModel user)
+        {
+            if (repository.GetUser(user.Login) != null) return state.LoginNotUnique(user.Login);
+            return state.Created("", user);
         }
 
         private ClaimsIdentity GetIdentity(string login, string password)

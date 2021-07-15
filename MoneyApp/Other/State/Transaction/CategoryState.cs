@@ -10,7 +10,7 @@ namespace MoneyApp.Other.State
             return base.NotFound(new ErrorState() 
             {
                 Error = Other.StatusCode.CATEGORY_NOT_FOUND,
-                Value = value
+                Value = "id: " + value
             });
         }
     }

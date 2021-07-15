@@ -14,6 +14,6 @@ namespace MoneyApp.Other
         public static string FAILED_TO_WRITE_TRANSACTION = "Ошибка выполнения транзакции";
         public static string SUCCESS = "Операция выполнена успешно";
         public static string TRANSACTION_NOT_FOUND_BY_PERIOD = "Не найдено транзакций за данный период";
-
+        public static string LOGIN_NOT_UNIQUE = "Данный логин уже зарегистрирован в системе";
     }
 }

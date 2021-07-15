@@ -18,7 +18,7 @@ namespace MoneyApp.Controllers.Transaction
         public IActionResult Get(int? id, int? typeId)
         {
             IEnumerable<CategoryModel> model = base.CategoryRepository.Get(id, typeId);
-                if (id != null && model.FirstOrDefault() == null) return base.CategoryState.NotFound($"id: {id}");
+                if (id != null && model.FirstOrDefault() == null) return base.CategoryState.NotFound(id);
             return base.CategoryState.Ok(model);
         }
     }

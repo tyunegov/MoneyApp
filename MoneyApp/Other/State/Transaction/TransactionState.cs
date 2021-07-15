@@ -16,7 +16,7 @@ namespace MoneyApp.Other.State
                 new ErrorState()
                 {
                     Error = Other.StatusCode.TRANSACTION_NOT_FOUND,
-                    Value = value
+                    Value = "id: "+value
                 }
                 );
         }

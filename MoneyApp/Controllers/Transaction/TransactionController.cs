@@ -22,7 +22,7 @@ namespace MoneyApp.Controllers.Transaction
         public IActionResult Post([FromBody]TransactionModel transaction)
         {                        
             CategoryModel category = base.CategoryRepository.Get(transaction.Category.Id).FirstOrDefault();
-                if (category == null) return base.CategoryState.NotFound("categoryId: "+transaction.Category.Id);
+                if (category == null) return base.CategoryState.NotFound(transaction.Category.Id);
             TransactionModel result = base.TransactionRepository.Insert(transaction);
                 if (result == null) return base.TransactionState.FailedToWrite(transaction);
 
@@ -41,7 +41,7 @@ namespace MoneyApp.Controllers.Transaction
         public IActionResult Get(int? id)
         {
             IEnumerable<TransactionModel> model = base.TransactionRepository.Get(id);
-                if (id != null && model.FirstOrDefault() == null) return base.TransactionState.NotFound($"id: {id}");
+                if (id != null && model.FirstOrDefault() == null) return base.TransactionState.NotFound(id);
             return base.TransactionState.Ok(model);
         }
 
@@ -74,10 +74,10 @@ namespace MoneyApp.Controllers.Transaction
         public IActionResult Put(int id, [FromBody] TransactionModel transaction)
         {
             TransactionModel _transaction = base.TransactionRepository.Get(id).FirstOrDefault();
-                if(_transaction==null) return base.TransactionState.NotFound($"id: {transaction.Id}");
+                if(_transaction==null) return base.TransactionState.NotFound(transaction.Id);
 
             CategoryModel category = base.CategoryRepository.Get(transaction.Category.Id).FirstOrDefault();
-                if (category == null) return base.CategoryState.NotFound($"id: {transaction.Id}");
+                if (category == null) return base.CategoryState.NotFound(transaction.Category.Id);
 
             TransactionModel result = base.TransactionRepository.Update(id, ref transaction);
             return base.TransactionState.Created("", transaction);
@@ -94,7 +94,7 @@ namespace MoneyApp.Controllers.Transaction
         public IActionResult Delete(int id)
         {
             TransactionModel _transaction = base.TransactionRepository.Get(id).FirstOrDefault();
-            if (_transaction == null) return base.TransactionState.NotFound($"id: {id}");
+            if (_transaction == null) return base.TransactionState.NotFound(id);
 
             if(!base.TransactionRepository.Delete(id)) return base.TransactionState.BadRequest();
             return base.TransactionState.Ok();
