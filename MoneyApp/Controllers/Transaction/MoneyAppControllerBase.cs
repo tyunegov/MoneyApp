@@ -1,5 +1,5 @@
 ﻿using MoneyApp.Db.Repository.Transaction;
-using MoneyApp.Interface.Repository.Transaction;
+using MoneyApp.Interface.Transaction;
 using MoneyApp.Other.State;
 
 namespace MoneyApp.Controllers.Transaction

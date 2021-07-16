@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MoneyApp.Interface.Repository.Transaction
+namespace MoneyApp.Interface.Transaction
 {
     public interface ITransactionRepository
     {

@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using MoneyApp.DB.Interface.Repository.Authorization;
+using MoneyApp.DB.Interface.Authorization;
 using MoneyApp.DB.Repository.Authorization;
 using MoneyApp.Models.User;
-using MoneyApp.Other.State;
 using MoneyApp.Other.State.Authorization;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ namespace MoneyApp.Controllers.Authorization
 {
     [ApiController]
     [Route("[controller]")]
-    public class AccountController : Controller
+    public class UserController : Controller
     {
         IUserRepository repository = new UserRepository();
         AccountState state = new AccountState();
@@ -25,7 +25,7 @@ namespace MoneyApp.Controllers.Authorization
             var identity = GetIdentity(username, password);
             if (identity == null)
             {
-                return BadRequest(new { errorText = "Invalid username or password." });
+                return BadRequest(state.InvalidLoginOrPassword());
             }
 
             var now = DateTime.UtcNow;
@@ -48,18 +48,22 @@ namespace MoneyApp.Controllers.Authorization
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Get()
         {
             var user = repository.GetUser(User.Identity.Name);
-            user.Password = null;
             return Ok(user);
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult Post([FromBody] UserModel user)
         {
-            if (repository.GetUser(user.Login) != null) return state.LoginNotUnique(user.Login);
-            return state.Created("", user);
+            user.Role = "user";
+                if (repository.GetUser(user.Login) != null) return state.LoginNotUnique(user.Login);
+            int? id = repository.Insert(user);
+                if (id == null) return state.FailedToWrite(user); 
+            return state.Created("", repository.GetUser(user.Login));
         }
 
         private ClaimsIdentity GetIdentity(string login, string password)

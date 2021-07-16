@@ -18,5 +18,23 @@ namespace MoneyApp.Other.State.Authorization
                 Value = "login: "+ login
             });
         }
+        
+        public BadRequestObjectResult InvalidLoginOrPassword()
+        {
+            return base.BadRequest(new ErrorState()
+            {
+                Error = Other.StatusCode.INVALID_LOGIN_OR_PASSWORD
+            });
+        }
+
+        public BadRequestObjectResult FailedToWrite([ActionResultObjectValue] object value)
+        {
+            return BadRequest(
+            new ErrorState()
+            {
+                Error = Other.StatusCode.FAILED_TO_WRITE_TRANSACTION,
+                Value = value
+            });
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using MoneyApp.DB.Interface.Repository.Authorization;
+using MoneyApp.DB.Interface.Authorization;
 using MoneyApp.Models.User;
 using MoneyApp.Repository;
 using System.Data;
@@ -34,7 +34,24 @@ namespace MoneyApp.DB.Repository.Authorization
                 string sql = @$"SELECT TOP 1  * FROM dbo.[User] u
                                 Where u.login = '{login}'
                                 AND u.password = '{password}'";
-                return db.Query<UserModel>(sql).FirstOrDefault();
+                var v = db.Query<UserModel>(sql).FirstOrDefault();
+                return v;
+            }
+        }
+
+        public int? Insert(UserModel user)
+        {
+            using (IDbConnection db = new SqlConnection(connectionString))
+            {
+                var sqlQuery = $@"DECLARE @ID int;
+                               INSERT INTO dbo.[User] (login, password, role)
+                                    VALUES('{user.Login}',
+                                    '{user.Password}',
+                                    '{user.Role}');
+                                     SET @ID = SCOPE_IDENTITY();
+                                     SELECT id from dbo.[User]
+							         where id = @ID";
+                return db.Query<int?>(sqlQuery).FirstOrDefault();
             }
         }
     }
