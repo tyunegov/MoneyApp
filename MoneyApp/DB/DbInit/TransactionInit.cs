@@ -23,7 +23,8 @@ namespace MoneyAppDb.Other.DbFactory
 	                                [Date] [date] NULL,
 	                                [CategoryId] [int] NULL,
 	                                [Amount] [money] NULL,
-	                                [Description] [text] NULL
+	                                [Description] [text] NULL,
+                                    [UserId] [int] NULL,
                                 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]"
                         );
                     //Заполняем категории

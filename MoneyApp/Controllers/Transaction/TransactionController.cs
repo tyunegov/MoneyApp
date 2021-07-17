@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MoneyApp.Models;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ namespace MoneyApp.Controllers.Transaction
     [Produces("application/json")]
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class TransactionController : MoneyAppControllerBase
     {
 
@@ -20,7 +22,7 @@ namespace MoneyApp.Controllers.Transaction
         /// <returns></returns>
         [HttpPost]
         public IActionResult Post([FromBody]TransactionModel transaction)
-        {                        
+        {
             CategoryModel category = base.CategoryRepository.Get(transaction.Category.Id).FirstOrDefault();
                 if (category == null) return base.CategoryState.NotFound(transaction.Category.Id);
             TransactionModel result = base.TransactionRepository.Insert(transaction);
@@ -31,7 +33,6 @@ namespace MoneyApp.Controllers.Transaction
         #endregion
 
         #region Get
-
         /// <summary>
         /// Получить все транзакции или одну по id
         /// </summary>
@@ -52,13 +53,13 @@ namespace MoneyApp.Controllers.Transaction
         /// <param name="endDate">Дата окончания отчетного периода</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("History")]
-        public IActionResult History(DateTime? startDate, DateTime? endDate)
+        [Route("Report")]
+        public IActionResult Report(int UserID, DateTime? startDate, DateTime? endDate)
         {
             if (startDate > endDate) return base.TransactionState.WrongFilterDates();
             if (startDate == null) startDate = new DateTime();
             if (endDate == null) endDate = DateTime.Today;
-            IEnumerable<AmountGroupTypeDTOModel> model = base.TransactionRepository.Period(startDate.Value, endDate.Value);
+            IEnumerable<AmountGroupTypeDTOModel> model = base.TransactionRepository.Period(userId, startDate.Value, endDate.Value);
             return base.TransactionState.Ok(model);
         }
         #endregion

@@ -51,11 +51,12 @@ namespace MoneyApp.Db.Repository.Transaction
             using (IDbConnection db = new SqlConnection(ConnectionString))
             {
                 var sqlQuery = $@"DECLARE @ID int;
-                               INSERT INTO Transactions (Date, CategoryId, Amount, Description)
+                               INSERT INTO Transactions (Date, CategoryId, Amount, Description, UserId)
                                     VALUES('{transaction.Date}',
                                     {transaction.Category.Id},
                                     {transaction.Amount.ToString().Replace(",", ".")}, 
-                                    '{transaction.Description}');
+                                    '{transaction.Description}',
+                                    '{transaction.UserId}');
                                SET @ID = SCOPE_IDENTITY();
                                SELECT * from
 							   Transactions
@@ -73,7 +74,8 @@ namespace MoneyApp.Db.Repository.Transaction
                                     Date = '{transaction.Date}',
                                     CategoryId = '{transaction.Category.Id}',
                                     Amount = '{transaction.Amount}', 
-                                    Description = '{(transaction.Description)}'
+                                    Description = '{(transaction.Description)}',
+                                    UserId = '{transaction.UserId}'
                                     Where Id={id}
                                SELECT * from [dbo].[Transactions] 
                                                     where Id={id}";
@@ -81,16 +83,17 @@ namespace MoneyApp.Db.Repository.Transaction
             }
         }
 
-        public IEnumerable<AmountGroupTypeDTOModel> Period(DateTime startDate, DateTime endDate)
+        public IEnumerable<AmountGroupTypeDTOModel> Period(int userId, DateTime startDate, DateTime endDate)
         {
             using (IDbConnection db = new SqlConnection(ConnectionString))
             {
-                string sql = @"SELECT ct.TypeId, SUM(t.Amount) as Amount, tt.Id, tt.Name 
+                string sql = @$"SELECT ct.TypeId, SUM(t.Amount) as Amount, tt.Id, tt.Name 
                         FROM [MoneyApp].[dbo].[Transactions] t
                         INNER JOIN Category ct on ct.Id = t.CategoryId 
-                        INNER JOIN TypeTransaction tt on tt.Id = ct.TypeId " +
-                    $"WHERE [Date]>='{startDate}' " +
-                    $@"AND [Date]<='{endDate} '
+                        INNER JOIN TypeTransaction tt on tt.Id = ct.TypeId 
+                        WHERE [Date]>='{startDate}' 
+                        AND [Date]<='{endDate}'
+                        AND [UserId] = {userId}
                         group by ct.TypeId, tt.Id, tt.Name";
                 return db.Query<AmountGroupTypeDTOModel, TypeTransactionModel, AmountGroupTypeDTOModel>(
                     sql,

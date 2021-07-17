@@ -10,6 +10,6 @@ namespace MoneyApp.Interface.Transaction
         IEnumerable<TransactionModel> Get(int? id);
         TransactionModel Insert(TransactionModel transaction);
         TransactionModel Update(int id, ref TransactionModel transaction);
-        IEnumerable<AmountGroupTypeDTOModel> Period(DateTime startDate, DateTime endDate);
+        IEnumerable<AmountGroupTypeDTOModel> Period(int userId, DateTime startDate, DateTime endDate);
     }
 }
