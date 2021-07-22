@@ -17,7 +17,7 @@ namespace MoneyApp.Db.Repository.Transaction
             this.connectionString = DBHelper.CONNECTION_STRING;
         }
 
-        public IEnumerable<CategoryModel> Get(int? id=null, int? typeId=null)
+        public IEnumerable<CategoryWithChildrenModel> Get(int? id=null, int? typeId=null)
         {
             using (IDbConnection db = new SqlConnection(connectionString))
             {
@@ -27,14 +27,14 @@ namespace MoneyApp.Db.Repository.Transaction
                     {(id != null ? $"AND c.Id ={id} " : "AND c.CategoryId IS NULL")}
                     {(typeId != null ? $"AND c.TypeId ={typeId} " : "")}
                     order by c.Name";
-                return db.Query<CategoryModel, TypeTransactionModel, CategoryModel>(
+                return db.Query<CategoryWithChildrenModel, TypeTransactionModel, CategoryWithChildrenModel>(
                     sql,
                     (c, tt) =>
                     {
                         c.Type = tt;
                         using (IDbConnection db = new SqlConnection(connectionString))
                         {
-                            c.SubCategory = db.Query<SubCategoryModel>(
+                            c.SubCategory = db.Query<CategoryModel>(
                                 $@"SELECT * FROM dbo.Category c
                                    Where c.CategoryId={c.Id}");
                         }

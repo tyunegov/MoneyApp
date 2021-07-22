@@ -17,7 +17,7 @@ namespace MoneyApp.Controllers.Transaction
         [HttpGet]
         public IActionResult Get(int? id, int? typeId)
         {
-            IEnumerable<CategoryModel> model = base.CategoryRepository.Get(id, typeId);
+            IEnumerable<CategoryWithChildrenModel> model = base.CategoryRepository.Get(id, typeId);
                 if (id != null && model.FirstOrDefault() == null) return base.CategoryState.NotFound(id);
             return base.CategoryState.Ok(model);
         }

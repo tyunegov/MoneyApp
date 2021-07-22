@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using MoneyApp.Interface.Transaction;
 using MoneyApp.Models;
+using MoneyApp.Models.Transaction;
 using MoneyApp.Repository;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace MoneyApp.Db.Repository.Transaction
             }
         }
 
-        public IEnumerable<TransactionModel> Get(int? id)
+        public IEnumerable<TransactionModel<CategoryWithParentModel>> Get(int? id)
         {
             using (IDbConnection db = new SqlConnection(ConnectionString))
             {
@@ -33,20 +34,21 @@ namespace MoneyApp.Db.Repository.Transaction
                      $"inner join Category ct on ct.Id = t.CategoryId " +
                      $"inner join TypeTransaction tt on tt.Id = ct.TypeId " +
                      $"WHERE 1=1 " +
-                     $"{(id != null ? "AND t.Id = "+id : "")}";
+                     $"{(id != null ? "AND t.Id = " + id : "")}";
 
-                return db.Query<TransactionModel, CategoryModel, TypeTransactionModel, TransactionModel>(
+                return db.Query<TransactionModel<CategoryWithParentModel>, CategoryWithParentModel, TypeTransactionModel, TransactionModel<CategoryWithParentModel>>(
                     sql,
                     (t, ct, tt) =>
                     {
                         t.Category = ct;
+                        t.Category.MainCategory = ct;
                         ct.Type = tt;
                         return t;
                     });
             }
         }
 
-        public TransactionModel Insert(TransactionModel transaction)
+        public TransactionModel<CategoryWithParentModel> Insert(TransactionModel<CategoryModel> transaction)
         {
             using (IDbConnection db = new SqlConnection(ConnectionString))
             {
@@ -61,11 +63,11 @@ namespace MoneyApp.Db.Repository.Transaction
                                SELECT * from
 							   Transactions
 							   where id = @ID";
-                return db.Query<TransactionModel>(sqlQuery).FirstOrDefault();
+                return db.Query<TransactionModel<CategoryWithParentModel>>(sqlQuery).FirstOrDefault();
             }
         }
 
-        public TransactionModel Update(int id, ref TransactionModel transaction)
+        public TransactionModel<CategoryWithParentModel> Update(int id, ref TransactionModel<CategoryModel> transaction)
         {
             using (IDbConnection db = new SqlConnection(ConnectionString))
             {
@@ -79,7 +81,7 @@ namespace MoneyApp.Db.Repository.Transaction
                                     Where Id={id}
                                SELECT * from [dbo].[Transactions] 
                                                     where Id={id}";
-                return db.Query<TransactionModel>(sqlQuery).FirstOrDefault();
+                return db.Query<TransactionModel<CategoryWithParentModel>>(sqlQuery).FirstOrDefault();
             }
         }
 

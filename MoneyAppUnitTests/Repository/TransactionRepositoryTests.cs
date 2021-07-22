@@ -19,9 +19,9 @@ namespace MoneyApp.Repository.Tests
     {
         private static IEnumerable<TransactionModel> MoqTransactions = new List<TransactionModel>
             {
-                new TransactionModel { Id=1, Amount=10, Date=DateTime.Now, Description="", Category=new CategoryModel{Id=1, Name="category1", Type=new TypeTransactionModel{Id=1, Name="type1" }} },
-                new TransactionModel { Id=2, Amount=20, Date=DateTime.Now, Description="", Category=new CategoryModel{Id=2, Name="category2", Type=new TypeTransactionModel{Id=1, Name="type1" }} },
-                new TransactionModel { Id=3, Amount=30, Date=DateTime.Now, Description="", Category=new CategoryModel{Id=3, Name="category3", Type=new TypeTransactionModel{Id=3, Name="type3" }} },
+                new TransactionModel { Id=1, Amount=10, Date=DateTime.Now, Description="", Category=new CategoryWithChildrenModel{Id=1, Name="category1", Type=new TypeTransactionModel{Id=1, Name="type1" }} },
+                new TransactionModel { Id=2, Amount=20, Date=DateTime.Now, Description="", Category=new CategoryWithChildrenModel{Id=2, Name="category2", Type=new TypeTransactionModel{Id=1, Name="type1" }} },
+                new TransactionModel { Id=3, Amount=30, Date=DateTime.Now, Description="", Category=new CategoryWithChildrenModel{Id=3, Name="category3", Type=new TypeTransactionModel{Id=3, Name="type3" }} },
             };
 
         private static IEnumerable<AmountGroupTypeDTOModel> MoqAGroupT = new List<AmountGroupTypeDTOModel>

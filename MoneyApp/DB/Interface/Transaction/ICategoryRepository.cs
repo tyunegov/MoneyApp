@@ -5,6 +5,6 @@ namespace MoneyApp.Interface.Transaction
 {
     public interface ICategoryRepository
     {
-        IEnumerable<CategoryModel> Get(int? id=null, int? typeId=null);
+        IEnumerable<CategoryWithChildrenModel> Get(int? id=null, int? typeId=null);
     }
 }
