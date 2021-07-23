@@ -16,7 +16,6 @@ namespace MoneyAppDb.Other.DbFactory
                 var v = db.Query<int?>($"SELECT OBJECT_ID (N'{DBHelper.TYPE_TRANSACTION}', N'U')").FirstOrDefault();
                 if (v == null)
                 {
-                    throw new NotImplementedException();
                     //Создаем таблицу
                     db.Query($@"CREATE TABLE {DBHelper.TYPE_TRANSACTION}(
 	                        		[Id] [int] IDENTITY(1,1) NOT NULL,

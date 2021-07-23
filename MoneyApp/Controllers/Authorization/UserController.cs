@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MoneyApp.DB.Interface.Authorization;
 using MoneyApp.DB.Repository.Authorization;
 using MoneyApp.Models.User;
+using MoneyApp.Other;
 using MoneyApp.Other.State.Authorization;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 
 namespace MoneyApp.Controllers.Authorization
@@ -18,6 +21,7 @@ namespace MoneyApp.Controllers.Authorization
     {
         IUserRepository repository = new UserRepository();
         AccountState state = new AccountState();
+        UserModel person;
 
         [HttpPost("/Token")]
         public IActionResult Token(string username, string password)
@@ -40,10 +44,11 @@ namespace MoneyApp.Controllers.Authorization
 
             var response = new
             {
-                access_token = encodedJwt,
-                username = identity.Name
+                id = person.Id,
+                username = identity.Name,
+                access_token = encodedJwt,                
             };
-
+            Log.Trace(response);
             return Json(response);
         }
 
@@ -68,14 +73,16 @@ namespace MoneyApp.Controllers.Authorization
 
         private ClaimsIdentity GetIdentity(string login, string password)
         {
-            UserModel person = repository.GetUser(login, password);
+            person = repository.GetUser(login, password);
             if (person != null)
             {
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimsIdentity.DefaultNameClaimType, person.Login),
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role)
-                };
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role),
+                    new Claim(ClaimTypes.NameIdentifier, person.Id.ToString())
+            };
+
                 ClaimsIdentity claimsIdentity =
                 new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
                     ClaimsIdentity.DefaultRoleClaimType);

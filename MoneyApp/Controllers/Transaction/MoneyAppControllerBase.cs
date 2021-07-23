@@ -1,10 +1,11 @@
-﻿using MoneyApp.Db.Repository.Transaction;
+﻿using Microsoft.AspNetCore.Mvc;
+using MoneyApp.Db.Repository.Transaction;
 using MoneyApp.Interface.Transaction;
 using MoneyApp.Other.State;
 
 namespace MoneyApp.Controllers.Transaction
 {
-    public abstract class MoneyAppControllerBase
+    public abstract class MoneyAppControllerBase:Controller
     {
         public ITypeTransactionRepository TypeTransactionRepository => new TypeTransactionRepository();
         public ITransactionRepository TransactionRepository => new TransactionRepository();

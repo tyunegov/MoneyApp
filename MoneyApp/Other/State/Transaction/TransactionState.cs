@@ -12,32 +12,35 @@ namespace MoneyApp.Other.State
 
         public override NotFoundObjectResult NotFound([ActionResultObjectValue] object value)
         {
-            return base.NotFound(
-                new ErrorState()
+            var error = base.NotFound(new ErrorState()
                 {
                     Error = Other.StatusCode.TRANSACTION_NOT_FOUND,
-                    Value = "id: "+value
-                }
-                );
+                    Value = "id= "+value
+                });
+            Log.Error(error);
+            return error;
         }
 
         public BadRequestObjectResult FailedToWrite([ActionResultObjectValue] object value)
         {
-            return BadRequest(
-            new ErrorState()
+            var error = BadRequest(new ErrorState()
             {
                 Error = Other.StatusCode.FAILED_TO_WRITE_TRANSACTION,
                 Value = value
             });
+            Log.Error(error);
+            return error;
         }
 
         public BadRequestObjectResult WrongFilterDates()
         {
-            return BadRequest(
+            var error = BadRequest(
             new ErrorState()
             {
                 Error = Other.StatusCode.STARTDATE_LATER_THAN_ENDDATE
             });
+            Log.Error(error);
+            return error;
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using MoneyApp.Interface.Transaction;
 using MoneyApp.Models;
 using MoneyApp.Models.Transaction;
+using MoneyApp.Other;
 using MoneyApp.Repository;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ namespace MoneyApp.Db.Repository.Transaction
                 string sqlQuery = $@"DELETE FROM Transactions 
                                   WHERE Id = {id}
                                   SELECT TOP 1 id from Transactions";
+                Log.Trace(sqlQuery);
                 return db.Query<int>(sqlQuery).FirstOrDefault()==id?false:true;
             }
         }
@@ -30,11 +32,11 @@ namespace MoneyApp.Db.Repository.Transaction
         {
             using (IDbConnection db = new SqlConnection(ConnectionString))
             {
-                var sql = $"SELECT {(id != null ? "TOP 1" : "")} * FROM Transactions t " +
-                     $"inner join Category ct on ct.Id = t.CategoryId " +
-                     $"inner join TypeTransaction tt on tt.Id = ct.TypeId " +
-                     $"WHERE 1=1 " +
-                     $"{(id != null ? "AND t.Id = " + id : "")}";
+                var sql = @$"SELECT {(id != null ? "TOP 1" : "")} * FROM Transactions t 
+                     inner join Category ct on ct.Id = t.CategoryId 
+                     inner join TypeTransaction tt on tt.Id = ct.TypeId 
+                     WHERE 1=1
+                     {(id != null ? "AND t.Id = " + id : "")}";
 
                 return db.Query<TransactionModel<CategoryWithParentModel>, CategoryWithParentModel, TypeTransactionModel, TransactionModel<CategoryWithParentModel>>(
                     sql,
@@ -63,6 +65,7 @@ namespace MoneyApp.Db.Repository.Transaction
                                SELECT * from
 							   Transactions
 							   where id = @ID";
+                Log.Trace(sqlQuery);
                 return db.Query<TransactionModel<CategoryWithParentModel>>(sqlQuery).FirstOrDefault();
             }
         }
@@ -81,6 +84,7 @@ namespace MoneyApp.Db.Repository.Transaction
                                     Where Id={id}
                                SELECT * from [dbo].[Transactions] 
                                                     where Id={id}";
+                Log.Trace(sqlQuery);
                 return db.Query<TransactionModel<CategoryWithParentModel>>(sqlQuery).FirstOrDefault();
             }
         }

@@ -5,7 +5,6 @@ using MoneyApp.Models.Transaction;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MoneyApp.Models.Transaction;
 
 namespace MoneyApp.Controllers.Transaction
 {
@@ -51,6 +50,7 @@ namespace MoneyApp.Controllers.Transaction
         /// <summary>
         /// Вывести отчет по транзакциям за определенный период
         /// </summary>
+        /// <param name="userId"></param>
         /// <param name="startDate">Дата начала отчетного периода</param>
         /// <param name="endDate">Дата окончания отчетного периода</param>
         /// <returns></returns>

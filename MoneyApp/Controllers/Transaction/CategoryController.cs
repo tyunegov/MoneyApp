@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MoneyApp.Models;
+using MoneyApp.Other;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,9 +17,9 @@ namespace MoneyApp.Controllers.Transaction
         /// <returns></returns>
         [HttpGet]
         public IActionResult Get(int? id, int? typeId)
-        {
+        {            
             IEnumerable<CategoryWithChildrenModel> model = base.CategoryRepository.Get(id, typeId);
-                if (id != null && model.FirstOrDefault() == null) return base.CategoryState.NotFound(id);
+            if (id != null && model.FirstOrDefault() == null) return base.CategoryState.NotFound(id);
             return base.CategoryState.Ok(model);
         }
     }
