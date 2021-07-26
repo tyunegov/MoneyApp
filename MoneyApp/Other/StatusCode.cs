@@ -16,5 +16,7 @@ namespace MoneyApp.Other
         public static string TRANSACTION_NOT_FOUND_BY_PERIOD = "Не найдено транзакций за данный период";
         public static string LOGIN_NOT_UNIQUE = "Данный логин уже зарегистрирован в системе";
         public static string INVALID_LOGIN_OR_PASSWORD = "Неправильный логин или пароль";
+        public static string USER_NOT_EXIST = "Пользователь не найден";
+        public static string FORBID_FOR_USER = "Не хватает прав для данного пользователя";
     }
 }

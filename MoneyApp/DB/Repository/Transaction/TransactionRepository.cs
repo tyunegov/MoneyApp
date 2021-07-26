@@ -28,7 +28,7 @@ namespace MoneyApp.Db.Repository.Transaction
             }
         }
 
-        public IEnumerable<TransactionModel<CategoryWithParentModel>> Get(int? id)
+        public IEnumerable<TransactionModel<CategoryWithParentModel>> Get(int? userId, int? id)
         {
             using (IDbConnection db = new SqlConnection(ConnectionString))
             {
@@ -36,7 +36,8 @@ namespace MoneyApp.Db.Repository.Transaction
                      inner join Category ct on ct.Id = t.CategoryId 
                      inner join TypeTransaction tt on tt.Id = ct.TypeId 
                      WHERE 1=1
-                     {(id != null ? "AND t.Id = " + id : "")}";
+                     {(userId != null ? "AND t.UserId = " + userId : "")}
+                     { (id != null ? "AND t.Id = " + id : "")}";
 
                 return db.Query<TransactionModel<CategoryWithParentModel>, CategoryWithParentModel, TypeTransactionModel, TransactionModel<CategoryWithParentModel>>(
                     sql,

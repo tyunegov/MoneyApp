@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MoneyApp.Models;
 using MoneyApp.Models.Transaction;
+using MoneyApp.Other;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,9 @@ namespace MoneyApp.Controllers.Transaction
         [HttpPost]
         public IActionResult Post([FromBody] TransactionModel<CategoryModel> transaction)
         {
+            int userId = new Auth().UserId;
+            if (!User.IsInRole("admin")&&transaction.UserId != userId) return base.AccountState.Forbid(userId);
+
             CategoryWithChildrenModel category = base.CategoryRepository.Get(transaction.Category.Id).FirstOrDefault();
                 if (category == null) return base.CategoryState.NotFound(transaction.Category.Id);
             TransactionModel<CategoryWithParentModel> result = base.TransactionRepository.Insert(transaction);
@@ -37,13 +41,26 @@ namespace MoneyApp.Controllers.Transaction
         /// <summary>
         /// Получить все транзакции или одну по id
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">id транзакции</param>
         /// <returns></returns>
         [HttpGet]
         public IActionResult Get(int? id)
         {
-            IEnumerable<TransactionModel<CategoryWithParentModel>> model = base.TransactionRepository.Get(id);
-                if (id != null && model.FirstOrDefault() == null) return base.TransactionState.NotFound(id);
+            IEnumerable<TransactionModel<CategoryWithParentModel>> model = base.TransactionRepository.Get(new Auth().UserId, id);
+            return base.TransactionState.Ok(model);
+        }
+
+        /// <summary>
+        /// Получить все транзакции или одну по id
+        /// </summary>
+        /// <param name="userId">Id пользователя</param>
+        /// <param name="id">id транзакции</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        public IActionResult Get(int userId, int? id)
+        {
+            IEnumerable<TransactionModel<CategoryWithParentModel>> model = base.TransactionRepository.Get(userId, id);
             return base.TransactionState.Ok(model);
         }
 
@@ -58,6 +75,7 @@ namespace MoneyApp.Controllers.Transaction
         [Route("Report")]
         public IActionResult Report(int userId, DateTime? startDate, DateTime? endDate)
         {
+            if (!User.IsInRole("admin") && new Auth().UserId != userId) return base.AccountState.Forbid(userId);
             if (startDate > endDate) return base.TransactionState.WrongFilterDates();
             if (startDate == null) startDate = new DateTime();
             if (endDate == null) endDate = DateTime.Today;
@@ -76,7 +94,10 @@ namespace MoneyApp.Controllers.Transaction
         [Route("{id}")]
         public IActionResult Put(int id, [FromBody] TransactionModel<CategoryModel> transaction)
         {
-            TransactionModel<CategoryWithParentModel> _transaction = base.TransactionRepository.Get(id).FirstOrDefault();
+            int userId = new Auth().UserId;
+            if (!User.IsInRole("admin") && userId != transaction.UserId) return base.AccountState.Forbid(userId);
+
+            TransactionModel<CategoryWithParentModel> _transaction = base.TransactionRepository.Get(transaction.UserId.Value, id).FirstOrDefault();
                 if(_transaction==null) return base.TransactionState.NotFound(transaction.Id);
 
             CategoryWithChildrenModel category = base.CategoryRepository.Get(transaction.Category.Id).FirstOrDefault();
@@ -96,7 +117,10 @@ namespace MoneyApp.Controllers.Transaction
         [Route("{id}")]
         public IActionResult Delete(int id)
         {
-            TransactionModel<CategoryWithParentModel> _transaction = base.TransactionRepository.Get(id).FirstOrDefault();
+            TransactionModel<CategoryWithParentModel> _transaction = null;
+            if (!User.IsInRole("admin")) _transaction = base.TransactionRepository.Get(new Auth().UserId, id).FirstOrDefault();
+            if (User.IsInRole("admin")) _transaction = base.TransactionRepository.Get(null, id).FirstOrDefault();
+
             if (_transaction == null) return base.TransactionState.NotFound(id);
 
             if(!base.TransactionRepository.Delete(id)) return base.TransactionState.BadRequest();

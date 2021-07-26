@@ -2,6 +2,7 @@
 using MoneyApp.Db.Repository.Transaction;
 using MoneyApp.Interface.Transaction;
 using MoneyApp.Other.State;
+using MoneyApp.Other.State.Authorization;
 
 namespace MoneyApp.Controllers.Transaction
 {
@@ -12,5 +13,6 @@ namespace MoneyApp.Controllers.Transaction
         public ICategoryRepository CategoryRepository => new CategoryRepository();
         public TransactionState TransactionState => new TransactionState();
         public CategoryState CategoryState => new CategoryState();
+        public AccountState AccountState = new AccountState();
     }
 }

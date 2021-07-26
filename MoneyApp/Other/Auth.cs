@@ -6,6 +6,6 @@ namespace MoneyApp.Other
 {
     public class Auth: Controller
     {
-        public string UserId { get => User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value; }
+        public int UserId { get => int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value); }
     }
 }
