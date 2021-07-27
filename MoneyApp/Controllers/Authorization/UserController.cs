@@ -61,7 +61,6 @@ namespace MoneyApp.Controllers.Authorization
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
         public IActionResult Post([FromBody] UserModel user)
         {
             user.Role = "user";
