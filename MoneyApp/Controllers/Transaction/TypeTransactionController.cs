@@ -9,10 +9,8 @@ namespace MoneyApp.Controllers.Transaction
     [Produces("application/json")]
     [Route("Type")]
     [ApiController]
-    public class TypeTransactionController : ControllerBase
+    public class TypeTransactionController : MoneyAppControllerBase
     {
-        TypeTransactionRepository repo = new TypeTransactionRepository();
-        ControllerBase state = new TypeTransactionState();
         #region Get
         /// <summary>
         /// Получить все типы транзакций
@@ -21,8 +19,8 @@ namespace MoneyApp.Controllers.Transaction
         [HttpGet]
         public IActionResult Get()
         {
-            IEnumerable<TypeTransactionModel> model = repo.GetAll();            
-            return state.Ok(model);
+            IEnumerable<TypeTransactionModel> model = base.TypeTransactionRepository.GetAll();            
+            return base.TypeTransactionState.Ok(model);
         }
         #endregion
     }

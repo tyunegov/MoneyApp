@@ -8,8 +8,9 @@ namespace MoneyApp.DB.Interface.Authorization
 {
     public interface IUserRepository
     {
-        UserModel GetUser(string login);
-        UserModel GetUser(string login, string password);
+        UserModel Get(string login);
+        UserModel Get(int userId);
+        UserModel Get(string login, string password);
         int? Insert(UserModel user);
     }
 }

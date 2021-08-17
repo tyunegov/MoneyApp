@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MoneyApp.Models;
 using MoneyApp.Models.Transaction;
+using MoneyApp.Models.User;
 using MoneyApp.Other;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,6 @@ namespace MoneyApp.Controllers.Transaction
     [Authorize]
     public class TransactionController : MoneyAppControllerBase
     {
-
         #region Post
         /// <summary>
         /// Добавление транзакции
@@ -30,7 +30,7 @@ namespace MoneyApp.Controllers.Transaction
 
             CategoryWithChildrenModel category = base.CategoryRepository.Get(transaction.Category.Id).FirstOrDefault();
                 if (category == null) return base.CategoryState.NotFound(transaction.Category.Id);
-            TransactionModel<CategoryWithParentModel> result = base.TransactionRepository.Insert(transaction);
+            TransactionModel<CategoryWithParentModel> result =  base.TransactionRepository.Insert(transaction);
                 if (result == null) return base.TransactionState.FailedToWrite(transaction);
 
             return base.TransactionState.Created("", result);
@@ -46,7 +46,8 @@ namespace MoneyApp.Controllers.Transaction
         [HttpGet]
         public IActionResult Get(int? id)
         {
-            IEnumerable<TransactionModel<CategoryWithParentModel>> model = base.TransactionRepository.Get(new Auth().UserId, id);
+            IEnumerable<TransactionModel<CategoryWithParentModel>> model = base.TransactionRepository.Get(base.Auth.UserId, id);
+            if (model.FirstOrDefault()==null) return base.TransactionState.NotFound(id);
             return base.TransactionState.Ok(model);
         }
 
@@ -57,10 +58,14 @@ namespace MoneyApp.Controllers.Transaction
         /// <param name="id">id транзакции</param>
         /// <returns></returns>
         [HttpGet]
+        [Route("userId")]
         [Authorize(Roles = "admin")]
         public IActionResult Get(int userId, int? id)
         {
+            if (base.UserRepository.Get(userId) == null) return base.AccountState.UserNotExist(userId);
+
             IEnumerable<TransactionModel<CategoryWithParentModel>> model = base.TransactionRepository.Get(userId, id);
+            if (model.FirstOrDefault()==null&&id!=null) return base.TransactionState.NotFound(id);
             return base.TransactionState.Ok(model);
         }
 
@@ -117,11 +122,11 @@ namespace MoneyApp.Controllers.Transaction
         [Route("{id}")]
         public IActionResult Delete(int id)
         {
-            TransactionModel<CategoryWithParentModel> _transaction = null;
-            if (!User.IsInRole("admin")) _transaction = base.TransactionRepository.Get(new Auth().UserId, id).FirstOrDefault();
-            if (User.IsInRole("admin")) _transaction = base.TransactionRepository.Get(null, id).FirstOrDefault();
-
-            if (_transaction == null) return base.TransactionState.NotFound(id);
+            IEnumerable<TransactionModel<CategoryWithParentModel>> _transaction = null;
+            if (!IsAdmin) _transaction = base.TransactionRepository.Get(Auth.UserId, id);
+            if (IsAdmin) _transaction = base.TransactionRepository.Get(null, id);
+            
+            if (_transaction.FirstOrDefault() == null) return base.TransactionState.NotFound(id);
 
             if(!base.TransactionRepository.Delete(id)) return base.TransactionState.BadRequest();
             return base.TransactionState.Ok();

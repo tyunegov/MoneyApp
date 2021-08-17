@@ -17,7 +17,18 @@ namespace MoneyApp.DB.Repository.Authorization
             this.connectionString = DBHelper.CONNECTION_STRING;
         }
 
-        public UserModel GetUser(string login)
+        public UserModel Get(int userId)
+        {
+            using (IDbConnection db = new SqlConnection(connectionString))
+            {
+                string sql = @$"SELECT TOP 1  * FROM dbo.[User] u
+                                Where u.id = '{userId}'";
+                var v = db.Query<UserModel>(sql).FirstOrDefault();
+                return v;
+            }
+        }
+
+        public UserModel Get(string login)
         {
             using (IDbConnection db = new SqlConnection(connectionString))
             {
@@ -27,7 +38,7 @@ namespace MoneyApp.DB.Repository.Authorization
             }
         }
 
-        public UserModel GetUser(string login, string password)
+        public UserModel Get(string login, string password)
         {
             using (IDbConnection db = new SqlConnection(connectionString))
             {

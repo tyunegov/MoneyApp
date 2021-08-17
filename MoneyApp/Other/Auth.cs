@@ -4,8 +4,17 @@ using System.Security.Claims;
 
 namespace MoneyApp.Other
 {
-    public class Auth: Controller
+    public class Auth : Controller
     {
-        public int UserId { get => int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value); }
+        int? userId;
+        public int UserId
+        {
+            get
+            {
+                if (userId == null) userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+                return userId.Value;
+            }
+            set => userId = value;
+        }
     }
 }

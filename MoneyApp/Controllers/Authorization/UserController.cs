@@ -56,7 +56,7 @@ namespace MoneyApp.Controllers.Authorization
         [Authorize]
         public IActionResult Get()
         {
-            var user = repository.GetUser(User.Identity.Name);
+            var user = repository.Get(User.Identity.Name);
             return Ok(user);
         }
 
@@ -64,15 +64,15 @@ namespace MoneyApp.Controllers.Authorization
         public IActionResult Post([FromBody] UserModel user)
         {
             user.Role = "user";
-                if (repository.GetUser(user.Login) != null) return state.LoginNotUnique(user.Login);
+                if (repository.Get(user.Login) != null) return state.LoginNotUnique(user.Login);
             int? id = repository.Insert(user);
                 if (id == null) return state.FailedToWrite(user); 
-            return state.Created("", repository.GetUser(user.Login));
+            return state.Created("", repository.Get(user.Login));
         }
 
         private ClaimsIdentity GetIdentity(string login, string password)
         {
-            person = repository.GetUser(login, password);
+            person = repository.Get(login, password);
             if (person != null)
             {
                 var claims = new List<Claim>

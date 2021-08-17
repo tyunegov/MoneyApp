@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MoneyApp.Models;
+using MoneyApp.Models.Transaction;
 using MoneyAppAPITests.Helper;
 using RestSharp;
 using RestSharp.Serialization.Json;
@@ -12,7 +13,7 @@ namespace MoneyAppAPI.Controllers.Tests
     [TestClass()]
     public class TransactionControllerTests
     {
-        readonly RestClient restClient;
+   /*     readonly RestClient restClient;
         IRestResponse responsePostOk;
         TransactionModel locationResponsePostOk;
 
@@ -29,7 +30,7 @@ namespace MoneyAppAPI.Controllers.Tests
         }
 
         #region GetAll
-        [TesTransactionModelethod()]
+        [TestMethod()]
         public void GetAllShouldStatusOk()
         {
             //Act
@@ -38,7 +39,7 @@ namespace MoneyAppAPI.Controllers.Tests
             Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
         }
 
-        [TesTransactionModelethod()]
+        [TestMethod()]
         public void GetAllReturnListTransactionModel()
         {
             //Act
@@ -50,7 +51,7 @@ namespace MoneyAppAPI.Controllers.Tests
         }
         #endregion
         #region Get/{id}
-        [TesTransactionModelethod()]
+        [TestMethod()]
         public void Get1ReturnTransactionModel()
         {
             //Act
@@ -61,7 +62,7 @@ namespace MoneyAppAPI.Controllers.Tests
             Assert.IsTrue(locationResponse is TransactionModel, "TransactionModel");
         }
 
-        [TesTransactionModelethod()]
+        [TestMethod()]
         public void Get0ShouldNotFound()
         {
             //Act
@@ -72,7 +73,7 @@ namespace MoneyAppAPI.Controllers.Tests
         }
         #endregion
         #region Post
-        [TesTransactionModelethod()]
+        [TestMethod()]
         public void PostShouldFieldIsRequired()
         {
             //Act
@@ -81,7 +82,7 @@ namespace MoneyAppAPI.Controllers.Tests
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode, "Статус BadRequest");
         }
 
-        [TesTransactionModelethod()]
+        [TestMethod()]
         public void PostShouldStatusOK()
         {
             // Assert
@@ -89,7 +90,7 @@ namespace MoneyAppAPI.Controllers.Tests
             Assert.IsTrue(locationResponsePostOk.Id>0, "Проверка записи Id");
         }
 
-        [TesTransactionModelethod()]
+        [TestMethod()]
         public void PostShouldTypeNotFound()
         {
             //Act
@@ -100,7 +101,7 @@ namespace MoneyAppAPI.Controllers.Tests
             Assert.AreEqual(response.Content, "\"Type not found by id -1\"");
         }
 
-        [TesTransactionModelethod()]
+        [TestMethod()]
         public void PostShouldReturnData()
         {
             // Assert
@@ -111,7 +112,7 @@ namespace MoneyAppAPI.Controllers.Tests
             Assert.AreEqual(TransactionHelper.transaction.Description, locationResponsePostOk.Description, "Проверка поля Description");
 
         }
-        [DataTesTransactionModelethod]
+        [DataTestMethod]
         [DataRow("PutWithoutType")]
         [DataRow("PutWithoutDate")] 
         [DataRow("PutWithoutAmountIs0")]
@@ -126,7 +127,7 @@ namespace MoneyAppAPI.Controllers.Tests
         }
         #endregion
         #region Delete/{id}
-        [TesTransactionModelethod()]
+        [TestMethod()]
         public void Delete0ShouldNotFound()
         {
             //Act
@@ -135,7 +136,7 @@ namespace MoneyAppAPI.Controllers.Tests
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode, "Статус NotFound");
             Assert.AreEqual(response.Content, "\"Transaction not found by id 0\"");
         }
-        [TesTransactionModelethod()]
+        [TestMethod()]
         public void DeleteShouldStatusOk()
         {
             //Act
@@ -145,5 +146,6 @@ namespace MoneyAppAPI.Controllers.Tests
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode, "Статус Ok");
         }
         #endregion
+   */
     }
 }
