@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MoneyApp.Models;
+using MoneyApp.Models.Transaction;
 using MoneyAppAPITests.Helper;
 using RestSharp;
 using RestSharp.Serialization.Json;
@@ -12,7 +13,7 @@ namespace MoneyAppAPI.Controllers.Tests
     [TestClass()]
     public class TransactionControllerTests
     {
-        readonly RestClient restClient;
+   /*     readonly RestClient restClient;
         IRestResponse responsePostOk;
         TransactionModel locationResponsePostOk;
 
@@ -145,5 +146,6 @@ namespace MoneyAppAPI.Controllers.Tests
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode, "Статус Ok");
         }
         #endregion
+   */
     }
 }

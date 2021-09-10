@@ -11,7 +11,7 @@ namespace MoneyAppAPITests.Helper
 {
     public class TransactionHelper
     {
-        // Костыль для DDT, т.к. DataRow принимает константы или typeOf
+   /*     // Костыль для DDT, т.к. DataRow принимает константы или typeOf
         public static Dictionary<string, IRestRequest> FakeRestRequest
         {
             get => new Dictionary<string, IRestRequest>
@@ -48,6 +48,6 @@ namespace MoneyAppAPITests.Helper
             return new RestRequest(route, method).AddParameter("application/json",
                                                                     JsonConvert.SerializeObject(transaction),
                                                                     ParameterType.RequestBody);
-        }
+        }*/
     }
 }
